@@ -184,6 +184,7 @@ Bug404/
 - Synthetic fallback detection when YOLO weights unavailable
 - Lazy model loading for fast dashboard startup
 
+
 ### SKU Recognition (Hybrid)
 
 ```

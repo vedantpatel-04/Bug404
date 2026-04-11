@@ -176,19 +176,27 @@ def _render_aisle_detail():
             f'</div>'
         )
 
-    det_html += (
-        '<div style="padding:14px;">'
-        '<div style="background:linear-gradient(135deg,#4ecad2,#6ee6ee);color:#00373a;text-align:center;padding:14px;border-radius:10px;font-weight:700;font-size:0.88rem;cursor:pointer;letter-spacing:0.02em;">&#x2705; DEPLOY RESTOCK TASK</div>'
-        '</div>'
-        '</div>'
-    )
-
+    det_html += '</div>'
     st.markdown(det_html, unsafe_allow_html=True)
+    
+    st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+    if st.button("✅ DEPLOY RESTOCK TASK", use_container_width=True, key="deploy_restock"):
+        if "manual_tasks" not in st.session_state:
+            st.session_state["manual_tasks"] = []
+        st.session_state["manual_tasks"].append({
+            "title": "Critical Restock",
+            "detail": "RESTOCK Soda 12pk (SKU 8821) - 0 units remaining on shelf.",
+            "assignee": "Arjun Sharma",
+            "urgency": "High",
+            "location": "Aisle 05: Beverages"
+        })
+        st.session_state["redirect_to"] = "Alerts"
+        st.rerun()
 
 
 def _render_planogram_tab(store_id: str):
     """Planogram compliance view."""
-    render_section_header("Planogram Compliance Overview", "Real-time compliance monitoring")
+    render_section_header("Real Time Error in Placement", "Real-time compliance monitoring")
 
     np.random.seed(hash(store_id + "plano") % 2**31)
     aisles_data = [

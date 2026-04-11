@@ -62,19 +62,19 @@ ALERT_EMAIL_RECIPIENTS = os.getenv("ALERT_EMAIL_RECIPIENTS", "").split(",")
 # ─── Store Layout ─────────────────────────────────────────────
 STORE_CONFIG = {
     "STORE01": {
-        "name": "Downtown Flagship Store",
+        "name": "Mumbai Flagship Store",
         "aisles": 6,
         "shelves_per_aisle": 4,
         "sections_per_shelf": 5,
     },
     "STORE02": {
-        "name": "Mall Express Outlet",
+        "name": "Ahmedabad CG Road Outlet",
         "aisles": 4,
         "shelves_per_aisle": 3,
         "sections_per_shelf": 4,
     },
     "STORE03": {
-        "name": "Suburban Superstore",
+        "name": "Delhi Connaught Place Superstore",
         "aisles": 8,
         "shelves_per_aisle": 5,
         "sections_per_shelf": 6,

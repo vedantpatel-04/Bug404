@@ -21,6 +21,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+
+
 # --- Load Custom CSS ---
 css_path = Path(__file__).parent / "assets" / "styles.css"
 if css_path.exists():
@@ -58,28 +60,33 @@ with st.sidebar:
 
     st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
 
-    # Navigation
+    # Navigation — read default from session_state so other pages can redirect
+    nav_options = [
+        "Dashboard",
+        "Live Monitor",
+        "Shelf Analysis",
+        "Forecast",
+        "Alerts",
+        "Smart Store",
+        "Settings",
+    ]
+    if "redirect_to" in st.session_state:
+        st.session_state["nav_radio"] = st.session_state.pop("redirect_to")
+
     page = st.radio(
         "nav",
-        options=[
-            "Dashboard",
-            "Live Monitor",
-            "Shelf Analysis",
-            "Forecast",
-            "Alerts",
-            "Smart Store",
-            "Settings",
-        ],
+        options=nav_options,
         label_visibility="collapsed",
+        key="nav_radio",
     )
 
     st.markdown("<div style='height: 16px;'></div>", unsafe_allow_html=True)
 
     # Store selector
     store_options = {
-        "STORE01": "New York - Flagship 04",
-        "STORE02": "San Francisco Central",
-        "STORE03": "London Autonomous",
+        "STORE01": "Mumbai \u2014 Flagship Store",
+        "STORE02": "Ahmedabad \u2014 CG Road",
+        "STORE03": "Delhi \u2014 Connaught Place",
     }
     selected_store = st.selectbox(
         "ACTIVE STORE",
@@ -105,9 +112,9 @@ with st.sidebar:
                 background: linear-gradient(135deg, #4ecad2, #6ee6ee);
                 display: flex; align-items: center; justify-content: center;
                 color: #00373a; font-weight: 700; font-size: 0.8rem;
-            ">AC</div>
+            ">AS</div>
             <div>
-                <div style="color: #e8eaf6; font-weight: 600; font-size: 0.82rem;">Alex Chen</div>
+                <div style="color: #e8eaf6; font-weight: 600; font-size: 0.82rem;">Arjun Sharma</div>
                 <div style="color: #69758a; font-size: 0.68rem;">Store Lead</div>
             </div>
         </div>

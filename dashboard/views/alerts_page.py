@@ -23,7 +23,7 @@ def render(store_id: str):
         <div>
             <h1 class="section-title">Alert Management</h1>
             <p style="color:#bcc9ca;font-size:0.82rem;margin-top:4px;">
-                Operational response for Store #402 &mdash; Active Monitoring
+            Operational response for Store &mdash; Mumbai Flagship &mdash; Active Monitoring
             </p>
         </div>
         <div style="display:flex;gap:12px;">
@@ -221,8 +221,8 @@ def _render_task_workflow():
                     </div>
                     <div style="display:flex;justify-content:space-between;margin-top:8px;">
                         <span style="display:flex;align-items:center;gap:4px;">
-                            <span style="width:18px;height:18px;border-radius:50%;background:#cecb5b;display:flex;align-items:center;justify-content:center;color:#333200;font-size:0.55rem;font-weight:700;">JD</span>
-                            <span style="color:#69758a;font-size:0.65rem;">John D.</span>
+                            <span style="width:18px;height:18px;border-radius:50%;background:#cecb5b;display:flex;align-items:center;justify-content:center;color:#333200;font-size:0.55rem;font-weight:700;">RD</span>
+                            <span style="color:#69758a;font-size:0.65rem;">Rajesh D.</span>
                         </span>
                         <span style="color:#69758a;font-size:0.65rem;">Started 12m ago</span>
                     </div>
@@ -248,7 +248,7 @@ def _render_task_workflow():
                         <span style="color:#6ee6ee;">&#x2705;</span>
                     </div>
                     <div style="display:flex;align-items:center;gap:4px;margin-top:6px;">
-                        <span style="width:18px;height:18px;border-radius:50%;background:#6ee6ee;display:flex;align-items:center;justify-content:center;color:#00373a;font-size:0.55rem;font-weight:700;">AM</span>
+                        <span style="width:18px;height:18px;border-radius:50%;background:#6ee6ee;display:flex;align-items:center;justify-content:center;color:#00373a;font-size:0.55rem;font-weight:700;">AS</span>
                         <span style="color:#69758a;font-size:0.65rem;">Verified by system</span>
                     </div>
                 </div>
@@ -256,16 +256,53 @@ def _render_task_workflow():
         </div>
         """, unsafe_allow_html=True)
 
+    # ── Create Manual Task ────────────────────────────────────────
     st.markdown("<div style='height:12px;'></div>", unsafe_allow_html=True)
 
-    # Create Manual Task button
-    st.markdown("""
-    <div style="text-align:right;">
-        <button class="btn-primary" style="font-size:0.88rem;padding:12px 24px;">
-            &#x2795; Create Manual Task
-        </button>
-    </div>
-    """, unsafe_allow_html=True)
+    # Initialise manual tasks store
+    if "manual_tasks" not in st.session_state:
+        st.session_state["manual_tasks"] = []
+
+    with st.expander("\u2795 Create Manual Task", expanded=False):
+        with st.form("create_task_form", clear_on_submit=True):
+            task_title = st.text_input("Task Title", placeholder="e.g. Restock Organic Milk")
+            task_desc = st.text_area("Details", placeholder="Describe the task...")
+            t_col1, t_col2 = st.columns(2)
+            with t_col1:
+                assignee = st.selectbox("Assign To", ["Priya M.", "Rajesh D.", "Amit K.", "Kavita L.", "Sneha R.", "Vikram S."])
+            with t_col2:
+                urgency = st.select_slider("Urgency", options=["Low", "Medium", "High", "Urgent"], value="Medium")
+            location = st.text_input("Location", placeholder="e.g. Aisle 3, Dairy Section")
+            submitted = st.form_submit_button("\u2705 Create Task", use_container_width=True)
+            if submitted and task_title:
+                from datetime import datetime
+                st.session_state["manual_tasks"].append({
+                    "title": task_title,
+                    "desc": task_desc,
+                    "assignee": assignee,
+                    "urgency": urgency,
+                    "location": location,
+                    "created": datetime.now().strftime("%H:%M"),
+                })
+                st.success(f"Task '{task_title}' created and assigned to {assignee}!")
+
+    # Show manually created tasks in the TO DO column
+    if st.session_state["manual_tasks"]:
+        st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+        st.markdown('<div style="color:#dbe2f9;font-size:0.88rem;font-weight:700;margin-bottom:8px;">\U0001f4dd Your Manual Tasks</div>', unsafe_allow_html=True)
+        for idx, t in enumerate(st.session_state["manual_tasks"]):
+            urgency_colors = {"Low": "#bcc9ca", "Medium": "#cecb5b", "High": "#ff8a65", "Urgent": "#ffb4ab"}
+            u_color = urgency_colors.get(t["urgency"], "#bcc9ca")
+            st.markdown(f"""
+            <div class="task-card todo" style="margin-bottom:8px;">
+                <div style="color:#dbe2f9;font-size:0.82rem;font-weight:600;">{t['title']}</div>
+                <div style="color:#bcc9ca;font-size:0.68rem;margin-top:2px;">&#x1F4CD; {t['location'] or 'No location'}</div>
+                <div style="display:flex;justify-content:space-between;margin-top:8px;">
+                    <span style="color:{u_color};font-size:0.65rem;font-weight:600;">{t['urgency']}</span>
+                    <span style="color:#69758a;font-size:0.65rem;">Assigned: {t['assignee']}</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
 
 def _render_associate_performance():
@@ -277,10 +314,10 @@ def _render_associate_performance():
 
     np.random.seed(55)
     associates = [
-        ("Sarah M.", "Active", np.random.randint(10, 25), f"{np.random.uniform(2, 5):.1f}m"),
-        ("John D.", "Active", np.random.randint(10, 25), f"{np.random.uniform(2, 5):.1f}m"),
-        ("Alex K.", "Break", np.random.randint(5, 15), f"{np.random.uniform(3, 8):.1f}m"),
-        ("Maria L.", "Active", np.random.randint(15, 30), f"{np.random.uniform(2, 4):.1f}m"),
+        ("Priya M.", "Active", np.random.randint(10, 25), f"{np.random.uniform(2, 5):.1f}m"),
+        ("Rajesh D.", "Active", np.random.randint(10, 25), f"{np.random.uniform(2, 5):.1f}m"),
+        ("Amit K.", "Break", np.random.randint(5, 15), f"{np.random.uniform(3, 8):.1f}m"),
+        ("Kavita L.", "Active", np.random.randint(15, 30), f"{np.random.uniform(2, 4):.1f}m"),
     ]
 
     rows = ""

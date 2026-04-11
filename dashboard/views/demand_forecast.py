@@ -16,23 +16,38 @@ from dashboard.components.kpi_cards import render_page_header, render_section_he
 from dashboard.components.charts import _base_layout
 
 
-
 def render(store_id: str):
     """Render the Demand Forecast page."""
     np.random.seed(hash(store_id + "forecast") % 2**31)
 
+    # ── Initialise session state defaults ─────────────────────────
+    if "forecast_freq" not in st.session_state:
+        st.session_state["forecast_freq"] = "Daily"
+    if "approved_orders" not in st.session_state:
+        st.session_state["approved_orders"] = False
+    if "resim_counter" not in st.session_state:
+        st.session_state["resim_counter"] = 0
+
     # --- Header ---
-    render_page_header(
-        "",
-        "Demand Forecast",
-        '<button class="btn-primary">&#x1F504; Run Re-Simulate</button>',
-    )
+    st.markdown("""
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;">
+        <div>
+            <div class="section-label"></div>
+            <h1 class="section-title">Demand Forecast</h1>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Functional Re-Simulate button ─────────────────────────────
+    if st.button("🔄 Run Re-Simulate", key="resim_btn"):
+        st.session_state["resim_counter"] += 1
+        st.rerun()
 
     # Subtitle
     sku_code = "DRK-CL-500ML"
     sku_name = "Sparkling Water 500ml"
     st.markdown(f"""
-    <div style="color:#bcc9ca;font-size:0.85rem;margin-top:-20px;margin-bottom:20px;">
+    <div style="color:#bcc9ca;font-size:0.85rem;margin-top:-10px;margin-bottom:20px;">
         Analyzing SKU: <span style="color:#6ee6ee;font-weight:600;">{sku_code}</span> ({sku_name})
     </div>
     """, unsafe_allow_html=True)
@@ -42,25 +57,32 @@ def render(store_id: str):
 
     st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
 
-    # --- Frequency tabs ---
+    # --- Frequency tabs (functional) ---
     freq_tabs = st.columns([1, 1, 1, 6])
     with freq_tabs[0]:
-        daily_btn = st.button("Daily", use_container_width=True)
+        if st.button("Daily", use_container_width=True, type="primary" if st.session_state["forecast_freq"] == "Daily" else "secondary"):
+            st.session_state["forecast_freq"] = "Daily"
+            st.rerun()
     with freq_tabs[1]:
-        weekly_btn = st.button("Weekly", use_container_width=True)
+        if st.button("Weekly", use_container_width=True, type="primary" if st.session_state["forecast_freq"] == "Weekly" else "secondary"):
+            st.session_state["forecast_freq"] = "Weekly"
+            st.rerun()
     with freq_tabs[2]:
-        monthly_btn = st.button("Monthly", use_container_width=True)
+        if st.button("Monthly", use_container_width=True, type="primary" if st.session_state["forecast_freq"] == "Monthly" else "secondary"):
+            st.session_state["forecast_freq"] = "Monthly"
+            st.rerun()
 
     st.markdown("<div style='height:12px;'></div>", unsafe_allow_html=True)
 
     # --- Main content ---
     col_chart, col_params = st.columns([5, 2])
 
+    with col_params:
+        # Render params FIRST so their values are available to the chart
+        _render_algorithm_params()
+
     with col_chart:
         _render_forecast_chart()
-
-    with col_params:
-        _render_algorithm_params()
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -71,13 +93,26 @@ def render(store_id: str):
 
 
 def _render_forecast_chart():
-    """Render the demand projection chart."""
-    st.markdown("""
+    """Render the demand projection chart — responsive to params and frequency."""
+
+    # ── Read algorithm parameters from session state ──────────────
+    safety = st.session_state.get("forecast_safety", 15)
+    horizon_key = st.session_state.get("forecast_horizon_radio", "30D")
+    weather_on = st.session_state.get("forecast_weather", True)
+    holiday_on = st.session_state.get("forecast_holiday", True)
+    competitor_on = st.session_state.get("forecast_competitor", False)
+    freq = st.session_state.get("forecast_freq", "Daily")
+    resim = st.session_state.get("resim_counter", 0)
+
+    horizon_map = {"7D": 7, "30D": 30, "90D": 90}
+    horizon_days = horizon_map.get(horizon_key, 30)
+
+    st.markdown(f"""
     <div class="panel">
         <div class="panel-header">
             <div>
                 <h2 style="color:#dbe2f9;font-size:1.05rem;font-weight:700;margin:0;">Demand Projection</h2>
-                <p style="color:#bcc9ca;font-size:0.72rem;margin:2px 0 0 0;">30-day look-forward horizon</p>
+                <p style="color:#bcc9ca;font-size:0.72rem;margin:2px 0 0 0;">{horizon_days}-day look-forward horizon &bull; {freq} view</p>
             </div>
             <div style="display:flex;gap:14px;font-size:0.72rem;color:#bcc9ca;">
                 <span style="display:flex;align-items:center;gap:5px;">
@@ -90,29 +125,64 @@ def _render_forecast_chart():
         </div>
     """, unsafe_allow_html=True)
 
-    np.random.seed(101)
+    # ── Dynamic seed: changes with Re-Simulate clicks ─────────────
+    seed_val = 101 + resim * 7 + safety + horizon_days
+    np.random.seed(int(seed_val) % (2**31))
+
     today = datetime.now().date()
     hist_dates = pd.date_range(end=today - timedelta(days=1), periods=30, freq="D")
-    fore_dates = pd.date_range(start=today, periods=30, freq="D")
+    fore_dates = pd.date_range(start=today, periods=horizon_days, freq="D")
 
+    # Generate base data
     hist_values = np.cumsum(np.random.randn(30) * 15 + 5) + 200
-    fore_base = hist_values[-1] + np.cumsum(np.random.randn(30) * 10 + 8)
-    fore_upper = fore_base + np.random.uniform(20, 40, 30)
-    fore_lower = fore_base - np.random.uniform(15, 30, 30)
+    fore_base = hist_values[-1] + np.cumsum(np.random.randn(horizon_days) * 10 + 8)
+
+    # Competitor noise
+    if competitor_on:
+        fore_base += np.random.randn(horizon_days) * 8
+
+    # Confidence band width scales with safety stock level
+    band_scale = safety / 15.0  # 15 is default, so 1.0 = normal
+    fore_upper = fore_base + np.random.uniform(20, 40, horizon_days) * band_scale
+    fore_lower = fore_base - np.random.uniform(15, 30, horizon_days) * band_scale
 
     fig = go.Figure()
 
+    # ── Aggregate by frequency ────────────────────────────────────
+    if freq == "Weekly":
+        # Resample to weekly
+        hist_df = pd.DataFrame({"date": hist_dates, "value": hist_values})
+        hist_df = hist_df.set_index("date").resample("W").mean().reset_index()
+
+        fore_df = pd.DataFrame({"date": fore_dates, "base": fore_base, "upper": fore_upper, "lower": fore_lower})
+        fore_df = fore_df.set_index("date").resample("W").mean().reset_index()
+
+        h_dates, h_values = hist_df["date"], hist_df["value"]
+        f_dates, f_base, f_upper, f_lower = fore_df["date"], fore_df["base"], fore_df["upper"], fore_df["lower"]
+    elif freq == "Monthly":
+        hist_df = pd.DataFrame({"date": hist_dates, "value": hist_values})
+        hist_df = hist_df.set_index("date").resample("ME").mean().reset_index()
+
+        fore_df = pd.DataFrame({"date": fore_dates, "base": fore_base, "upper": fore_upper, "lower": fore_lower})
+        fore_df = fore_df.set_index("date").resample("ME").mean().reset_index()
+
+        h_dates, h_values = hist_df["date"], hist_df["value"]
+        f_dates, f_base, f_upper, f_lower = fore_df["date"], fore_df["base"], fore_df["upper"], fore_df["lower"]
+    else:  # Daily (default)
+        h_dates, h_values = hist_dates, hist_values
+        f_dates, f_base, f_upper, f_lower = fore_dates, fore_base, fore_upper, fore_lower
+
     # Historical
     fig.add_trace(go.Scatter(
-        x=hist_dates, y=hist_values,
+        x=h_dates, y=h_values,
         mode="lines", name="Historical",
         line=dict(color="#bcc9ca", width=1.5),
     ))
 
     # Confidence band
     fig.add_trace(go.Scatter(
-        x=list(fore_dates) + list(fore_dates[::-1]),
-        y=list(fore_upper) + list(fore_lower[::-1]),
+        x=list(f_dates) + list(f_dates[::-1]),
+        y=list(f_upper) + list(f_lower[::-1]),
         fill="toself", fillcolor="rgba(110,230,238,0.06)",
         line=dict(width=0), name="Confidence",
         showlegend=False,
@@ -120,7 +190,7 @@ def _render_forecast_chart():
 
     # Forecast
     fig.add_trace(go.Scatter(
-        x=fore_dates, y=fore_base,
+        x=f_dates, y=f_base,
         mode="lines", name="Forecast",
         line=dict(color="#6ee6ee", width=2.5),
     ))
@@ -139,28 +209,32 @@ def _render_forecast_chart():
         yshift=-15,
     )
 
-    # Weather annotation
-    weather_date = fore_dates[8].isoformat()
-    fig.add_annotation(
-        x=weather_date,
-        y=float(fore_base[8]),
-        text="&#9728; +32°C",
-        showarrow=True, arrowhead=2, arrowcolor="#cecb5b",
-        font=dict(color="#cecb5b", size=10),
-        bgcolor="rgba(20,27,44,0.8)", bordercolor="#cecb5b",
-        borderwidth=1, borderpad=4,
-    )
+    # Weather annotation (only if toggle is on)
+    if weather_on and len(f_dates) > 8:
+        weather_idx = min(8, len(f_dates) - 1)
+        weather_date = f_dates.iloc[weather_idx] if hasattr(f_dates, 'iloc') else f_dates[weather_idx]
+        fig.add_annotation(
+            x=weather_date,
+            y=float(f_base.iloc[weather_idx] if hasattr(f_base, 'iloc') else f_base[weather_idx]),
+            text="&#9728; +32°C",
+            showarrow=True, arrowhead=2, arrowcolor="#cecb5b",
+            font=dict(color="#cecb5b", size=10),
+            bgcolor="rgba(20,27,44,0.8)", bordercolor="#cecb5b",
+            borderwidth=1, borderpad=4,
+        )
 
-    # Promo annotation
-    promo_date = fore_dates[18].isoformat()
-    fig.add_annotation(
-        x=promo_date,
-        y=float(fore_base[18]),
-        text="&#x1F4B0; BOGO PROMO",
-        showarrow=True, arrowhead=2, arrowcolor="#6ee6ee",
-        font=dict(color="#00373a", size=9),
-        bgcolor="#6ee6ee", borderpad=4,
-    )
+    # Promo annotation (only if toggle is on)
+    if holiday_on and len(f_dates) > 18:
+        promo_idx = min(18, len(f_dates) - 1)
+        promo_date = f_dates.iloc[promo_idx] if hasattr(f_dates, 'iloc') else f_dates[promo_idx]
+        fig.add_annotation(
+            x=promo_date,
+            y=float(f_base.iloc[promo_idx] if hasattr(f_base, 'iloc') else f_base[promo_idx]),
+            text="&#x1F4B0; BOGO PROMO",
+            showarrow=True, arrowhead=2, arrowcolor="#6ee6ee",
+            font=dict(color="#00373a", size=9),
+            bgcolor="#6ee6ee", borderpad=4,
+        )
 
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
@@ -175,7 +249,7 @@ def _render_forecast_chart():
 
 
 def _render_algorithm_params():
-    """Algorithm Parameters sidebar."""
+    """Algorithm Parameters sidebar — values stored in session state."""
     st.markdown("""
     <div class="panel" style="padding:20px;">
         <h3 style="color:#dbe2f9;font-size:0.95rem;font-weight:700;margin:0 0 16px 0;">Algorithm Parameters</h3>
@@ -183,50 +257,78 @@ def _render_algorithm_params():
 
     # Safety Stock Level slider
     st.markdown('<div style="color:#bcc9ca;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:4px;">Safety Stock Level</div>', unsafe_allow_html=True)
-    safety_level = st.slider("safety", 5, 30, 15, label_visibility="collapsed")
+    safety_level = st.slider("safety", 5, 30, 15, label_visibility="collapsed", key="forecast_safety")
     st.markdown(f'<div style="color:#69758a;font-size:0.68rem;font-style:italic;margin-top:-8px;">Protects against 95% of variability.</div>', unsafe_allow_html=True)
 
     st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
 
     # Forecast Horizon
     st.markdown('<div style="color:#bcc9ca;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:6px;">Forecast Horizon</div>', unsafe_allow_html=True)
-    horizon = st.radio("fh", ["7D", "30D", "90D"], index=1, horizontal=True, label_visibility="collapsed")
+    horizon = st.radio("fh", ["7D", "30D", "90D"], index=1, horizontal=True, label_visibility="collapsed", key="forecast_horizon_radio")
 
     st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
 
     # External Factors toggles
     st.markdown('<div style="color:#bcc9ca;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;margin-bottom:8px;">External Factors</div>', unsafe_allow_html=True)
-    weather_on = st.toggle("Local Weather API", value=True)
-    holiday_on = st.toggle("Public Holiday Sync", value=True)
-    competitor_on = st.toggle("Competitor Pricing", value=False)
+    weather_on = st.toggle("Local Weather API", value=True, key="forecast_weather")
+    holiday_on = st.toggle("Public Holiday Sync", value=True, key="forecast_holiday")
+    competitor_on = st.toggle("Competitor Pricing", value=False, key="forecast_competitor")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-def _render_replenishment_table():
-    """Replenishment recommendations table."""
-    st.markdown("""
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <h2 style="color:#dbe2f9;font-size:1.1rem;font-weight:700;margin:0;">Replenishment Recommendations</h2>
-        <div style="display:flex;gap:10px;">
-            <button class="btn-ghost" style="font-size:0.78rem;padding:8px 16px;">&#x2B07; Export CSV</button>
-            <button class="btn-primary" style="font-size:0.78rem;padding:8px 16px;">&#x2714; Approve All</button>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    np.random.seed(77)
-    items = [
+def _get_replenishment_items() -> list:
+    """Get replenishment data list."""
+    return [
         {"sku": "DRK-CL-500ML", "name": "Sparkling Water - Case of 12", "stock": 142, "stock_status": "Below Safety (250)", "stock_color": "#ffb4ab", "demand": 892, "min_max": "400 / 1200", "order": 1050, "has_action": True},
         {"sku": "SNK-CH-90G", "name": "Classic Sea Salt Chips", "stock": 580, "stock_status": "Healthy", "stock_color": "#6ee6ee", "demand": 320, "min_max": "200 / 800", "order": 0, "has_action": False},
         {"sku": "DAI-MK-2L", "name": "Whole Milk 2L Bottle", "stock": 85, "stock_status": "Expiring in 2D", "stock_color": "#cecb5b", "demand": 450, "min_max": "100 / 500", "order": 415, "has_action": True},
         {"sku": "CON-SU-1KG", "name": "Granulated Sugar 1kg", "stock": 1200, "stock_status": "Overstock", "stock_color": "#bcc9ca", "demand": 45, "min_max": "200 / 600", "order": 0, "has_action": False},
     ]
 
+
+def _render_replenishment_table():
+    """Replenishment recommendations table with functional Export CSV and Approve All."""
+    items = _get_replenishment_items()
+    all_approved = st.session_state.get("approved_orders", False)
+
+    st.markdown("""
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h2 style="color:#dbe2f9;font-size:1.1rem;font-weight:700;margin:0;">Replenishment Recommendations</h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Functional Export CSV & Approve All buttons ─────────────
+    btn_c1, btn_c2, btn_spacer = st.columns([1, 1, 4])
+    with btn_c1:
+        # Build CSV from items
+        export_df = pd.DataFrame(items)
+        csv_data = export_df.to_csv(index=False).encode("utf-8")
+        st.download_button(
+            label="⬇ Export CSV",
+            data=csv_data,
+            file_name="replenishment_recommendations.csv",
+            mime="text/csv",
+            use_container_width=True,
+        )
+    with btn_c2:
+        if st.button("✔ Approve All", use_container_width=True, key="approve_all_btn"):
+            st.session_state["approved_orders"] = True
+            st.success("✅ All orders approved successfully!")
+
+    np.random.seed(77)
+
     rows = ""
     for item in items:
+        has_action = item["has_action"] and not all_approved
         order_html = f'<span style="color:#6ee6ee;font-size:1rem;font-weight:900;">{item["order"]:,}</span>' if item["order"] > 0 else '<span style="color:#69758a;">0</span>'
-        action_html = '<span style="background:rgba(110,230,238,0.12);color:#6ee6ee;font-size:0.68rem;padding:5px 14px;border-radius:4px;font-weight:600;cursor:pointer;">Confirm Order</span>' if item["has_action"] else '<span style="color:#69758a;font-size:0.75rem;font-style:italic;">No Action Needed</span>'
+
+        if all_approved and item["has_action"]:
+            action_html = '<span style="color:#6ee6ee;font-size:0.72rem;font-weight:600;">✅ Approved</span>'
+        elif has_action:
+            action_html = '<span style="background:rgba(110,230,238,0.12);color:#6ee6ee;font-size:0.68rem;padding:5px 14px;border-radius:4px;font-weight:600;cursor:pointer;">Confirm Order</span>'
+        else:
+            action_html = '<span style="color:#69758a;font-size:0.75rem;font-style:italic;">No Action Needed</span>'
 
         rows += (
             f'<tr style="border-bottom:1px solid rgba(61,73,74,0.08);">'

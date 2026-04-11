@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import plotly.graph_objects as go
+import io
 
 from dashboard.components.kpi_cards import (
     render_kpi_row, render_page_header, render_section_header,
@@ -19,44 +20,68 @@ from dashboard.components.kpi_cards import (
 from dashboard.components.charts import _base_layout, ACCENT_BLUE, TEXT_SECONDARY
 
 
+# ── Cache KPI values so PDF and display use the same numbers ──────
+def _get_kpi_data(store_id: str) -> dict:
+    """Generate and cache KPI values for this store."""
+    np.random.seed(hash(store_id) % 2**31)
+    return {
+        "shelf_health": f"{np.random.uniform(90, 97):.1f}",
+        "shelf_delta": f"+{np.random.uniform(1, 4):.1f}",
+        "oos_units": np.random.randint(8, 25),
+        "revenue_recovered": f"{np.random.randint(8, 18):,},480",
+        "forecast_accuracy": f"{np.random.uniform(95, 99):.1f}",
+    }
+
+
 def render(store_id: str, store_options: dict):
     """Render the Store Health Dashboard overview."""
-    np.random.seed(hash(store_id) % 2**31)
+    kpi = _get_kpi_data(store_id)
 
-    # --- Page Header ---
-    render_page_header(
-        "Operations Intelligence",
-        "Store Health Dashboard",
-        '<button class="btn-ghost">&#9776; Filter View</button>'
-        '<button class="btn-primary">Download Report</button>',
+    # --- Page Header (Filter View button REMOVED) ---
+    st.markdown("""
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;">
+        <div>
+            <div class="section-label">Operations Intelligence</div>
+            <h1 class="section-title">Store Health Dashboard</h1>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ── Functional Download Report button ─────────────────────────
+    pdf_bytes = _generate_pdf_report(store_id, store_options, kpi)
+    st.download_button(
+        label="📄 Download Report (PDF)",
+        data=pdf_bytes,
+        file_name=f"ShelfIQ_Report_{store_id}_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+        mime="application/pdf",
     )
 
     # --- Hero KPI Row ---
     render_kpi_row([
         {
             "label": "Shelf Health Score",
-            "value": f"{np.random.uniform(90, 97):.1f}%",
+            "value": f'{kpi["shelf_health"]}%',
             "icon": "&#x1F6E1;",
-            "chip_text": f"+{np.random.uniform(1, 4):.1f}% vs LW",
+            "chip_text": f'{kpi["shelf_delta"]}% vs LW',
             "accent": "primary",
         },
         {
             "label": "Real-time Out-of-Stock",
-            "value": f'{np.random.randint(8, 25)} <span style="font-size:1rem;font-weight:500;color:#bcc9ca;">units</span>',
+            "value": f'{kpi["oos_units"]} <span style="font-size:1rem;font-weight:500;color:#bcc9ca;">units</span>',
             "icon": "&#x1F4E6;",
             "chip_text": "High Alert",
             "accent": "error",
         },
         {
             "label": "Revenue Recovered",
-            "value": f"${np.random.randint(8, 18):,},480",
+            "value": f'₹{kpi["revenue_recovered"]}',
             "icon": "&#x1F4B0;",
             "chip_text": "Estimated",
             "accent": "secondary",
         },
         {
             "label": "Forecast Accuracy",
-            "value": f"{np.random.uniform(95, 99):.1f}%",
+            "value": f'{kpi["forecast_accuracy"]}%',
             "icon": "&#x2699;",
             "chip_text": "Model V4.2",
             "accent": "dim",
@@ -72,7 +97,7 @@ def render(store_id: str, store_options: dict):
         _render_store_heatmap(store_id)
 
     with col_alerts:
-        _render_critical_alerts()
+        _render_critical_alerts(store_id)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
@@ -350,8 +375,8 @@ def _get_floor_plan_data(store_id: str, num_aisles: int = 5, sections_per_aisle:
     return floor
 
 
-def _render_critical_alerts():
-    """Render the critical alerts panel."""
+def _render_critical_alerts(store_id: str):
+    """Render the top 3 highest priority alerts from AlertManager."""
     st.markdown("""
     <div class="panel" style="height: 100%;">
         <div class="panel-header" style="border-bottom: 1px solid rgba(61,73,74,0.1);">
@@ -363,37 +388,72 @@ def _render_critical_alerts():
         <div style="padding: 14px;">
     """, unsafe_allow_html=True)
 
-    alerts = [
-        render_alert_card(
-            "Premium Greek Yogurt - 500g",
-            "Shelf E4-2 &bull; 0 units left",
-            "Loss Warning", "critical", "2m ago",
-            "Est. Daily Loss", "$1,420",
-        ),
-        render_alert_card(
-            "Energy Drink Multi-pack (x6)",
-            "Aisle 09 &bull; Misplaced Item Alert",
-            "Compliance", "warning", "14m ago",
-            "Sales Risk", "$890",
-        ),
-        render_alert_card(
-            "Organic Cage-Free Eggs Large",
-            "Shelf F1-1 &bull; High Velocity",
-            "Out of Stock", "critical", "28m ago",
-            "Est. Daily Loss", "$2,100",
-        ),
-    ]
-    st.markdown("".join(alerts), unsafe_allow_html=True)
+    try:
+        from alerts.alert_manager import AlertManager
+        mgr = AlertManager()
+        live_alerts = mgr.generate_sample_alerts(store_id=store_id, count=3)
+    except Exception:
+        live_alerts = []
+
+    alerts_list = []
+    if not live_alerts:
+        # Fallback to static data if manager fails
+        alerts_list = [
+            render_alert_card(
+                "Premium Greek Yogurt - 500g",
+                "Shelf E4-2 &bull; 0 units left",
+                "Loss Warning", "critical", "2m ago",
+                "Est. Daily Loss", "₹1,420",
+            ),
+            render_alert_card(
+                "Energy Drink Multi-pack (x6)",
+                "Aisle 09 &bull; Misplaced Item Alert",
+                "Compliance", "warning", "14m ago",
+                "Sales Risk", "₹890",
+            ),
+            render_alert_card(
+                "Organic Cage-Free Eggs Large",
+                "Shelf F1-1 &bull; High Velocity",
+                "Out of Stock", "critical", "28m ago",
+                "Est. Daily Loss", "₹2,100",
+            ),
+        ]
+    else:
+        # Map dynamic alerts to the card renderer
+        import datetime
+        impact_labels = {5: "Loss Warning", 4: "Loss Warning", 3: "Compliance", 2: "Low Risk", 1: "Low Risk"}
+        badge_types = {5: "critical", 4: "critical", 3: "warning", 2: "neutral", 1: "neutral"}
+        
+        for a in live_alerts[:3]:
+            try:
+                dt = datetime.datetime.fromisoformat(a.created_at)
+                mins_ago = max(1, int((datetime.datetime.now() - dt).total_seconds() / 60))
+                time_str = f"{mins_ago}m ago"
+            except Exception:
+                time_str = "just now"
+                
+            loss_val = f"₹{a.revenue_impact:,.0f}" if a.revenue_impact else "₹0"
+            alerts_list.append(render_alert_card(
+                a.message,
+                f"{a.sku_id} &bull; {a.aisle_id}/{a.shelf_id}",
+                impact_labels.get(a.severity, "Warning"), 
+                badge_types.get(a.severity, "warning"), 
+                time_str,
+                "Est. Loss", 
+                loss_val,
+            ))
+
+    st.markdown("".join(alerts_list), unsafe_allow_html=True)
 
     st.markdown("""
         </div>
-        <div style="padding:12px;text-align:center;border-top:1px solid rgba(61,73,74,0.1);">
-            <a style="color:#6ee6ee;font-size:0.82rem;font-weight:700;text-decoration:none;cursor:pointer;">
-                View All 12 Alerts
-            </a>
-        </div>
     </div>
     """, unsafe_allow_html=True)
+
+    # ── Functional "View All Alerts" button ───────────────────────
+    if st.button("🔔 View All 12 Alerts", use_container_width=True, key="view_all_alerts"):
+        st.session_state["redirect_to"] = "Alerts"
+        st.rerun()
 
 
 def _render_oos_trends():
@@ -441,7 +501,7 @@ def _render_compliance_bars():
     <div class="panel">
         <div class="panel-header">
             <div>
-                <h2 style="color:#dbe2f9;font-size:1.05rem;font-weight:700;margin:0;">Planogram Compliance</h2>
+                <h2 style="color:#dbe2f9;font-size:1.05rem;font-weight:700;margin:0;">Real Time Error in Placement</h2>
                 <p style="color:#bcc9ca;font-size:0.72rem;margin:2px 0 0 0;">Percentage accuracy by aisle</p>
             </div>
             <div class="kpi-chip primary">Avg: {avg}%</div>
@@ -474,3 +534,141 @@ def _render_compliance_bars():
         """
 
     st.markdown(bars_html + "</div></div>", unsafe_allow_html=True)
+
+
+def _pdf_safe(text: str) -> str:
+    """Sanitize text for fpdf2 Helvetica (Latin-1 only)."""
+    return (
+        text
+        .replace("\u2014", "-")   # em-dash
+        .replace("\u2013", "-")   # en-dash
+        .replace("\u2019", "'")   # right single quote
+        .replace("\u2018", "'")   # left single quote
+        .replace("\u201c", '"')   # left double quote
+        .replace("\u201d", '"')   # right double quote
+        .replace("\u20b9", "Rs.") # ₹ rupee sign
+        .replace("\u2022", "*")   # bullet
+        .replace("\u2026", "...")  # ellipsis
+    )
+
+
+def _generate_pdf_report(store_id: str, store_options: dict, kpi: dict) -> bytes:
+    """Generate a PDF summary report using fpdf2."""
+    try:
+        from fpdf import FPDF
+    except ImportError:
+        # Fallback: return a plain-text pseudo-PDF if fpdf2 not installed
+        content = (
+            f"ShelfIQ Store Health Report\n"
+            f"Store: {store_options.get(store_id, store_id)}\n"
+            f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n"
+            f"Shelf Health Score: {kpi['shelf_health']}%\n"
+            f"Out-of-Stock Units: {kpi['oos_units']}\n"
+            f"Revenue Recovered: Rs.{kpi['revenue_recovered']}\n"
+            f"Forecast Accuracy: {kpi['forecast_accuracy']}%\n"
+        )
+        return content.encode("utf-8")
+
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
+
+    # Title
+    pdf.set_font("Helvetica", "B", 22)
+    pdf.set_text_color(78, 202, 210)
+    pdf.cell(0, 15, "ShelfIQ - Store Health Report", new_x="LMARGIN", new_y="NEXT", align="C")
+
+    # Subtitle
+    pdf.set_font("Helvetica", "", 12)
+    pdf.set_text_color(120, 120, 140)
+    store_name = _pdf_safe(store_options.get(store_id, store_id))
+    pdf.cell(0, 8, f"Store: {store_name}", new_x="LMARGIN", new_y="NEXT", align="C")
+    pdf.cell(0, 8, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", new_x="LMARGIN", new_y="NEXT", align="C")
+    pdf.ln(10)
+
+    # Divider
+    pdf.set_draw_color(78, 202, 210)
+    pdf.line(20, pdf.get_y(), 190, pdf.get_y())
+    pdf.ln(8)
+
+    # KPI Section
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.set_text_color(30, 30, 60)
+    pdf.cell(0, 10, "Key Performance Indicators", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(4)
+
+    kpi_items = [
+        ("Shelf Health Score", f"{kpi['shelf_health']}%"),
+        ("Real-time Out-of-Stock", f"{kpi['oos_units']} units"),
+        ("Revenue Recovered", f"Rs.{kpi['revenue_recovered']}"),
+        ("Forecast Accuracy", f"{kpi['forecast_accuracy']}%"),
+    ]
+
+    pdf.set_font("Helvetica", "", 11)
+    for label, value in kpi_items:
+        pdf.set_text_color(80, 80, 100)
+        pdf.cell(90, 8, _pdf_safe(label))
+        pdf.set_text_color(30, 30, 60)
+        pdf.set_font("Helvetica", "B", 11)
+        pdf.cell(0, 8, _pdf_safe(value), new_x="LMARGIN", new_y="NEXT")
+        pdf.set_font("Helvetica", "", 11)
+
+    pdf.ln(8)
+
+    # Alert Summary
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.set_text_color(30, 30, 60)
+    pdf.cell(0, 10, "Critical Alerts Summary", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(4)
+
+    alert_items = [
+        ("Premium Greek Yogurt - 500g", "Shelf E4-2 - 0 units left", "Rs.1,420 est. daily loss"),
+        ("Energy Drink Multi-pack (x6)", "Aisle 09 - Misplaced Item", "Rs.890 sales risk"),
+        ("Organic Cage-Free Eggs Large", "Shelf F1-1 - High Velocity", "Rs.2,100 est. daily loss"),
+    ]
+
+    pdf.set_font("Helvetica", "", 10)
+    for title, detail, impact in alert_items:
+        pdf.set_text_color(200, 60, 60)
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.cell(0, 7, _pdf_safe(f"  {title}"), new_x="LMARGIN", new_y="NEXT")
+        pdf.set_text_color(80, 80, 100)
+        pdf.set_font("Helvetica", "", 10)
+        pdf.cell(0, 6, _pdf_safe(f"    {detail} | {impact}"), new_x="LMARGIN", new_y="NEXT")
+        pdf.ln(2)
+
+    pdf.ln(8)
+
+    # Compliance Section
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.set_text_color(30, 30, 60)
+    pdf.cell(0, 10, "Real Time Error in Placement by Aisle", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(4)
+
+    aisles_data = [
+        ("Aisle 01: Produce", 98),
+        ("Aisle 02: Bakery", 94),
+        ("Aisle 03: Dairy", 78),
+        ("Aisle 04: Meat & Seafood", 91),
+        ("Aisle 05: Beverages", 96),
+    ]
+
+    for name, pct in aisles_data:
+        pdf.set_font("Helvetica", "", 10)
+        pdf.set_text_color(80, 80, 100)
+        pdf.cell(80, 7, _pdf_safe(name))
+        if pct >= 85:
+            pdf.set_text_color(34, 197, 94)
+        else:
+            pdf.set_text_color(200, 60, 60)
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.cell(0, 7, f"{pct}%", new_x="LMARGIN", new_y="NEXT")
+
+    # Footer
+    pdf.ln(15)
+    pdf.set_font("Helvetica", "I", 8)
+    pdf.set_text_color(150, 150, 170)
+    pdf.cell(0, 6, "This report was auto-generated by ShelfIQ Retail Intelligence System.", align="C")
+
+    return bytes(pdf.output())
+

@@ -44,14 +44,27 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
     font-family: 'Inter', sans-serif !important;
 }
 
-* { font-family: 'Inter', sans-serif !important; }
+/* Hide Streamlit header anchor links */
+.stMarkdown a.header-anchor, 
+.stMarkdown h1 a, .stMarkdown h2 a, .stMarkdown h3 a {
+    display: none !important;
+    visibility: hidden !important;
+}
 
 /* ─── Hide Streamlit chrome ──────────────────────────────── */
-.stApp > header,
 #MainMenu, footer,
 [data-testid="stToolbar"],
 [data-testid="stDecoration"],
 .stDeployButton { display: none !important; }
+
+
+/* Disable sidebar collapsing completely */
+[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapseButton"],
+section[data-testid="stSidebar"] button[kind="header"] {
+    display: none !important;
+    visibility: hidden !important;
+}
 
 /* ─── Sidebar ────────────────────────────────────────────── */
 [data-testid="stSidebar"] {

@@ -1,5 +1,5 @@
 """
-Analytics & Settings Page
+Analytics & User Settings Page
 """
 import sys
 from pathlib import Path
@@ -14,10 +14,10 @@ from dashboard.components.kpi_cards import render_page_header, render_section_he
 
 
 def render(store_id: str):
-    """Render the Analytics / Settings page."""
+    """Render the Analytics / User Settings page."""
     np.random.seed(hash(store_id + "analytics") % 2**31)
 
-    render_page_header("System Configuration", "Analytics & Settings")
+    render_page_header("User Preferences", "Analytics & Settings")
 
     tab1, tab2 = st.tabs(["Analytics", "Settings"])
 
@@ -40,7 +40,7 @@ def _render_analytics(store_id: str):
         st.markdown(f"""
         <div class="kpi-card accent-primary">
             <div class="kpi-label">Total Revenue Protected</div>
-            <div class="kpi-value">${np.random.randint(80, 200)}K</div>
+            <div class="kpi-value">₹{np.random.randint(80, 200)}K</div>
             <div style="color:#6ee6ee;font-size:0.72rem;margin-top:4px;">+{np.random.randint(10,30)}% vs last quarter</div>
         </div>
         """, unsafe_allow_html=True)
@@ -84,7 +84,7 @@ def _render_analytics(store_id: str):
             font=dict(color="#bcc9ca", size=10, family="Inter"),
             height=280, margin=dict(l=30, r=10, t=10, b=30),
             xaxis=dict(gridcolor="rgba(61,73,74,0.1)"),
-            yaxis=dict(gridcolor="rgba(61,73,74,0.1)", title="$K"),
+            yaxis=dict(gridcolor="rgba(61,73,74,0.1)", title="₹K"),
             showlegend=False,
         )
         st.plotly_chart(fig, use_container_width=True)
@@ -184,7 +184,7 @@ def _build_stockout_heatmap_data(store_id: str) -> dict:
             "ORDER BY detected_at",
             (store_id,),
         )
-        if rows and len(rows) > 10:
+        if rows and len(rows) >= 10:
             # Parse into matrix
             aisle_set = sorted(set(r["aisle_id"] for r in rows))
             aisles = aisle_set if aisle_set else default_aisles
@@ -231,75 +231,105 @@ def _build_stockout_heatmap_data(store_id: str) -> dict:
 
 
 def _render_settings():
-    """System settings panel."""
-    render_section_header("System Configuration", "Manage pipeline settings")
+    """User Settings panel — refactored from system/model settings."""
+    render_section_header("User Settings", "Manage your preferences and system configuration")
 
-    col1, col2 = st.columns(2)
+    # ── User Profile Section ──────────────────────────────────────
+    st.markdown("""
+    <div class="panel" style="padding:20px;margin-bottom:16px;">
+        <h3 style="color:#dbe2f9;font-size:0.95rem;font-weight:700;margin:0 0 16px 0;">👤 User Profile</h3>
+    """, unsafe_allow_html=True)
 
-    with col1:
-        st.markdown("""
-        <div class="panel" style="padding:20px;">
-            <h3 style="color:#dbe2f9;font-size:0.95rem;font-weight:700;margin:0 0 16px 0;">CV Pipeline</h3>
-        """, unsafe_allow_html=True)
+    p_col1, p_col2 = st.columns(2)
+    with p_col1:
+        user_name = st.text_input("Display Name", value=st.session_state.get("user_name", "Arjun Sharma"), key="user_name_input")
+        user_role = st.selectbox("Role", ["Store Lead", "Store Manager", "Regional Manager", "Analyst"], index=0, key="user_role_input")
+    with p_col2:
+        user_email = st.text_input("Email", value=st.session_state.get("user_email", "arjun.sharma@shelfiq.in"), key="user_email_input")
+        user_store = st.selectbox("Default Store", ["Mumbai — Flagship Store", "Ahmedabad — CG Road", "Delhi — Connaught Place"], index=0, key="user_store_input")
 
-        model = st.selectbox("Detection Model", ["YOLOv8n", "YOLOv8s", "YOLOv8m"], key="cv_model")
-        conf = st.slider("Confidence Threshold", 0.0, 1.0, 0.45, 0.05, key="cv_conf")
-        st.toggle("Enable Infrared Preprocessing", value=False, key="cv_ir")
-        st.toggle("CLAHE Enhancement", value=True, key="cv_clahe")
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    with col2:
-        st.markdown("""
-        <div class="panel" style="padding:20px;">
-            <h3 style="color:#dbe2f9;font-size:0.95rem;font-weight:700;margin:0 0 16px 0;">Forecasting Engine</h3>
-        """, unsafe_allow_html=True)
+    # ── Notification Preferences ──────────────────────────────────
+    st.markdown("""
+    <div class="panel" style="padding:20px;margin-bottom:16px;">
+        <h3 style="color:#dbe2f9;font-size:0.95rem;font-weight:700;margin:0 0 16px 0;">🔔 Notification Preferences</h3>
+    """, unsafe_allow_html=True)
 
-        engine = st.selectbox("Forecasting Model", ["Prophet", "Exponential Smoothing", "LSTM"], key="fc_model")
-        horizon = st.number_input("Forecast Horizon (days)", 7, 90, 30, key="fc_horizon")
-        st.toggle("Include Weather Data", value=True, key="fc_weather")
-        st.toggle("Include Promo Calendar", value=True, key="fc_promo")
-        st.markdown("</div>", unsafe_allow_html=True)
+    n_col1, n_col2 = st.columns(2)
+    with n_col1:
+        st.toggle("Dashboard Push Notifications", value=True, key="user_alert_push")
+        st.toggle("Email Digest", value=True, key="user_alert_email")
+        st.toggle("Mobile Alerts", value=False, key="user_alert_mobile")
+    with n_col2:
+        st.selectbox("Email Digest Frequency", ["Real-time", "Hourly", "Daily", "Weekly"], index=2, key="user_digest_freq")
+        cooldown = st.slider("Alert Cooldown (min)", 1, 60, 15, key="user_alert_cooldown")
+        st.selectbox("Theme", ["Dark (Default)", "Light", "System"], index=0, key="user_theme")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # ── Advanced: Pipeline Settings (collapsible) ─────────────────
+    with st.expander("⚙️ Advanced: Pipeline Configuration", expanded=False):
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("""
+            <div class="panel" style="padding:20px;">
+                <h3 style="color:#dbe2f9;font-size:0.95rem;font-weight:700;margin:0 0 16px 0;">CV Pipeline</h3>
+            """, unsafe_allow_html=True)
+
+            model = st.selectbox("Detection Model", ["YOLOv8n", "YOLOv8s", "YOLOv8m"], key="cv_model")
+            conf = st.slider("Confidence Threshold", 0.0, 1.0, 0.45, 0.05, key="cv_conf")
+            st.toggle("Enable Infrared Preprocessing", value=False, key="cv_ir")
+            st.toggle("CLAHE Enhancement", value=True, key="cv_clahe")
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        with col2:
+            st.markdown("""
+            <div class="panel" style="padding:20px;">
+                <h3 style="color:#dbe2f9;font-size:0.95rem;font-weight:700;margin:0 0 16px 0;">Forecasting Engine</h3>
+            """, unsafe_allow_html=True)
+
+            engine = st.selectbox("Forecasting Model", ["Prophet", "Exponential Smoothing", "LSTM"], key="fc_model")
+            horizon = st.number_input("Forecast Horizon (days)", 7, 90, 30, key="fc_horizon")
+            st.toggle("Include Weather Data", value=True, key="fc_weather")
+            st.toggle("Include Promo Calendar", value=True, key="fc_promo")
+            st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    col3, col4 = st.columns(2)
+    # ── Database & Connections (always visible) ───────────────────
+    st.markdown("""
+    <div class="panel" style="padding:20px;">
+        <h3 style="color:#dbe2f9;font-size:0.95rem;font-weight:700;margin:0 0 16px 0;">Database & Connections</h3>
+    """, unsafe_allow_html=True)
 
-    with col3:
-        st.markdown("""
-        <div class="panel" style="padding:20px;">
-            <h3 style="color:#dbe2f9;font-size:0.95rem;font-weight:700;margin:0 0 16px 0;">Alert Configuration</h3>
-        """, unsafe_allow_html=True)
-
-        st.toggle("Dashboard Push Notifications", value=True, key="alert_push")
-        st.toggle("Email Digest", value=True, key="alert_email")
-        st.toggle("Mobile Alerts", value=False, key="alert_mobile")
-        cooldown = st.slider("Dedup Cooldown (min)", 1, 60, 15, key="alert_cooldown")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    with col4:
-        st.markdown("""
-        <div class="panel" style="padding:20px;">
-            <h3 style="color:#dbe2f9;font-size:0.95rem;font-weight:700;margin:0 0 16px 0;">Database & Connections</h3>
-        """, unsafe_allow_html=True)
-
-        st.markdown("""
-            <div style="margin-bottom:10px;">
-                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                    <span style="color:#bcc9ca;font-size:0.78rem;">SQLite Database</span>
-                    <span style="color:#6ee6ee;font-size:0.72rem;">&#x2705; Connected</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                    <span style="color:#bcc9ca;font-size:0.78rem;">Redis Pub/Sub</span>
-                    <span style="color:#cecb5b;font-size:0.72rem;">&#x1F7E1; Fallback Mode</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                    <span style="color:#bcc9ca;font-size:0.78rem;">CV Pipeline</span>
-                    <span style="color:#6ee6ee;font-size:0.72rem;">&#x2705; Active</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;">
-                    <span style="color:#bcc9ca;font-size:0.78rem;">Forecasting</span>
-                    <span style="color:#6ee6ee;font-size:0.72rem;">&#x2705; Running</span>
-                </div>
+    st.markdown("""
+        <div style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="color:#bcc9ca;font-size:0.78rem;">SQLite Database</span>
+                <span style="color:#6ee6ee;font-size:0.72rem;">&#x2705; Connected</span>
             </div>
-        """, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="color:#bcc9ca;font-size:0.78rem;">Redis Pub/Sub</span>
+                <span style="color:#cecb5b;font-size:0.72rem;">&#x1F7E1; Fallback Mode</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="color:#bcc9ca;font-size:0.78rem;">CV Pipeline</span>
+                <span style="color:#6ee6ee;font-size:0.72rem;">&#x2705; Active</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;">
+                <span style="color:#bcc9ca;font-size:0.78rem;">Forecasting</span>
+                <span style="color:#6ee6ee;font-size:0.72rem;">&#x2705; Running</span>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # ── Save Settings Button ──────────────────────────────────────
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("💾 Save All Settings", use_container_width=True, type="primary"):
+        # Persist to session state
+        st.session_state["user_name"] = user_name
+        st.session_state["user_email"] = user_email
+        st.toast("✅ Settings saved successfully!", icon="✅")
