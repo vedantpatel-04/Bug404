@@ -91,31 +91,27 @@ def _render_alert_inbox():
     ]
 
     for a in alerts:
-        st.markdown(f"""
-        <div style="
-            background: var(--surface-high, #222a3b);
-            border-radius: 10px; padding: 14px; margin-bottom: 12px;
-            border: 1px solid rgba({int(a['color'][1:3],16)},{int(a['color'][3:5],16)},{int(a['color'][5:7],16)},0.2);
-        ">
-            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-                <span style="color:{a['color']};font-size:0.62rem;font-weight:700;text-transform:uppercase;
-                    background:rgba({int(a['color'][1:3],16)},{int(a['color'][3:5],16)},{int(a['color'][5:7],16)},0.1);
-                    padding:2px 8px;border-radius:3px;">{a['impact']}</span>
-                <span style="color:#69758a;font-size:0.65rem;">{a['time']}</span>
-            </div>
-            <div style="display:flex;gap:12px;align-items:flex-start;">
-                <div style="width:60px;height:50px;background:#141b2c;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#69758a;font-size:0.7rem;">&#x1F4F7;</div>
-                <div style="flex:1;">
-                    <div style="color:#dbe2f9;font-weight:700;font-size:0.88rem;">{a['title']}</div>
-                    <div style="color:#bcc9ca;font-size:0.72rem;margin-top:2px;">{a['detail']}</div>
-                    <div style="display:flex;gap:8px;margin-top:10px;">
-                        <span style="background:rgba(110,230,238,0.12);color:#6ee6ee;font-size:0.65rem;padding:5px 12px;border-radius:4px;font-weight:600;cursor:pointer;">&#x1F4CB; Assign</span>
-                        <span style="background:#2d3546;color:#bcc9ca;font-size:0.65rem;padding:5px 12px;border-radius:4px;cursor:pointer;">Details</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        r, g, b = int(a['color'][1:3], 16), int(a['color'][3:5], 16), int(a['color'][5:7], 16)
+        card_html = (
+            f'<div style="background:#222a3b;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid rgba({r},{g},{b},0.2);">'
+            f'<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'
+            f'<span style="color:{a["color"]};font-size:0.62rem;font-weight:700;text-transform:uppercase;background:rgba({r},{g},{b},0.1);padding:2px 8px;border-radius:3px;">{a["impact"]}</span>'
+            f'<span style="color:#69758a;font-size:0.65rem;">{a["time"]}</span>'
+            f'</div>'
+            f'<div style="display:flex;gap:12px;align-items:flex-start;">'
+            f'<div style="width:60px;height:50px;background:#141b2c;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#69758a;font-size:0.7rem;">&#x1F4F7;</div>'
+            f'<div style="flex:1;">'
+            f'<div style="color:#dbe2f9;font-weight:700;font-size:0.88rem;">{a["title"]}</div>'
+            f'<div style="color:#bcc9ca;font-size:0.72rem;margin-top:2px;">{a["detail"]}</div>'
+            f'<div style="display:flex;gap:8px;margin-top:10px;">'
+            f'<span style="background:rgba(110,230,238,0.12);color:#6ee6ee;font-size:0.65rem;padding:5px 12px;border-radius:4px;font-weight:600;cursor:pointer;">&#x1F4CB; Assign</span>'
+            f'<span style="background:#2d3546;color:#bcc9ca;font-size:0.65rem;padding:5px 12px;border-radius:4px;cursor:pointer;">Details</span>'
+            f'</div>'
+            f'</div>'
+            f'</div>'
+            f'</div>'
+        )
+        st.markdown(card_html, unsafe_allow_html=True)
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 
@@ -251,24 +247,24 @@ def _render_associate_performance():
     rows = ""
     for name, status, tasks, resp_time in associates:
         status_color = "#6ee6ee" if status == "Active" else "#cecb5b"
-        rows += f"""
-        <tr style="border-bottom:1px solid rgba(61,73,74,0.08);">
-            <td style="padding:12px 14px;">
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <div style="width:30px;height:30px;border-radius:50%;background:#222a3b;display:flex;align-items:center;justify-content:center;color:#69758a;font-size:0.7rem;">&#x1F464;</div>
-                    <span style="color:#dbe2f9;font-weight:600;font-size:0.82rem;">{name}</span>
-                </div>
-            </td>
-            <td style="padding:12px 14px;text-align:center;">
-                <span style="color:{status_color};font-size:0.72rem;font-weight:500;">
-                    <span style="width:6px;height:6px;border-radius:50%;background:{status_color};display:inline-block;margin-right:4px;"></span>
-                    {status}
-                </span>
-            </td>
-            <td style="padding:12px 14px;text-align:center;color:#dbe2f9;font-weight:600;">{tasks}</td>
-            <td style="padding:12px 14px;text-align:center;color:#bcc9ca;">{resp_time}</td>
-        </tr>
-        """
+        rows += (
+            f'<tr style="border-bottom:1px solid rgba(61,73,74,0.08);">'
+            f'<td style="padding:12px 14px;">'
+            f'<div style="display:flex;align-items:center;gap:10px;">'
+            f'<div style="width:30px;height:30px;border-radius:50%;background:#222a3b;display:flex;align-items:center;justify-content:center;color:#69758a;font-size:0.7rem;">&#x1F464;</div>'
+            f'<span style="color:#dbe2f9;font-weight:600;font-size:0.82rem;">{name}</span>'
+            f'</div>'
+            f'</td>'
+            f'<td style="padding:12px 14px;text-align:center;">'
+            f'<span style="color:{status_color};font-size:0.72rem;font-weight:500;">'
+            f'<span style="width:6px;height:6px;border-radius:50%;background:{status_color};display:inline-block;margin-right:4px;"></span>'
+            f'{status}'
+            f'</span>'
+            f'</td>'
+            f'<td style="padding:12px 14px;text-align:center;color:#dbe2f9;font-weight:600;">{tasks}</td>'
+            f'<td style="padding:12px 14px;text-align:center;color:#bcc9ca;">{resp_time}</td>'
+            f'</tr>'
+        )
 
     st.markdown(f"""
     <div class="panel" style="overflow-x:auto;">

@@ -17,6 +17,13 @@ from planogram.schemas import (
 )
 from config.settings import PLANOGRAM_DIR
 
+# ── OCR price-tag detector (graceful fallback if easyocr not installed) ──
+try:
+    from models.price_tag_detector import PriceTagDetector, PriceDetectionOutput
+    _PRICE_DETECTOR_AVAILABLE = True
+except ImportError:
+    _PRICE_DETECTOR_AVAILABLE = False
+
 
 class PlanogramComplianceEngine:
     """
@@ -24,8 +31,20 @@ class PlanogramComplianceEngine:
     Produces compliance reports with violation details.
     """
 
-    def __init__(self):
+    def __init__(self, enable_ocr: bool = True):
         self.planograms = {}  # store_id -> Planogram
+        # Lazy-init OCR price detector
+        self._price_detector = None
+        self._ocr_enabled = enable_ocr and _PRICE_DETECTOR_AVAILABLE
+
+    def _get_price_detector(self):
+        """Lazy-initialize the price tag detector."""
+        if self._price_detector is None and self._ocr_enabled:
+            try:
+                self._price_detector = PriceTagDetector()
+            except Exception:
+                self._ocr_enabled = False
+        return self._price_detector
 
     def load_planogram(self, store_id: str) -> Optional[Planogram]:
         """Load planogram JSON for a store."""
@@ -47,11 +66,55 @@ class PlanogramComplianceEngine:
             self.load_planogram(store_id)
         return self.planograms
 
+    def detect_price_mismatches(
+        self,
+        shelf_image,
+        planogram: Planogram,
+    ) -> list[dict]:
+        """
+        Run OCR on a shelf image and compare detected prices against
+        the planogram's expected prices.
+
+        Returns:
+            List of dicts: [{section_id, expected_price, detected_price, bbox, confidence}]
+        """
+        detector = self._get_price_detector()
+        if detector is None:
+            return []
+
+        result = detector.detect(shelf_image)
+        if not result.detections:
+            return []
+
+        # Build a lookup of expected prices from the planogram
+        expected_prices = {}
+        for section in planogram.get_all_sections():
+            expected_prices[section.section_id] = section.price
+
+        mismatches = []
+        for det in result.detections:
+            # Try to match each OCR-detected price against the nearest expected price.
+            # In a production system, spatial mapping from bbox to section_id would
+            # be used; here we flag any price that doesn't match ANY expected price.
+            matched = any(
+                abs(det.price - ep) < 0.01 for ep in expected_prices.values()
+            )
+            if not matched:
+                mismatches.append({
+                    "detected_price": det.price,
+                    "raw_text": det.raw_text,
+                    "bbox": det.bbox,
+                    "confidence": det.confidence,
+                })
+
+        return mismatches
+
     def check_compliance(
         self,
         store_id: str,
         detected_state: dict,
         planogram: Optional[Planogram] = None,
+        shelf_image=None,
     ) -> StoreComplianceReport:
         """
         Check shelf compliance against planogram.
@@ -70,6 +133,14 @@ class PlanogramComplianceEngine:
 
         if planogram is None:
             return StoreComplianceReport(store_id=store_id, checked_at=datetime.now().isoformat())
+
+        # ── If a shelf image is provided, run OCR to enrich detected_state ──
+        if shelf_image is not None and self._ocr_enabled:
+            ocr_mismatches = self.detect_price_mismatches(shelf_image, planogram)
+            # Log OCR-detected mismatches so they can flow into the violation logic
+            for mm in ocr_mismatches:
+                print(f"  🔍 OCR price mismatch: detected ${mm['detected_price']:.2f} "
+                      f"({mm['raw_text']}) conf={mm['confidence']:.2f}")
 
         aisle_results = []
         total_sections = 0

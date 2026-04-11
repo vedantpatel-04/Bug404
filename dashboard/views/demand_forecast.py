@@ -223,22 +223,22 @@ def _render_replenishment_table():
         order_html = f'<span style="color:#6ee6ee;font-size:1rem;font-weight:900;">{item["order"]:,}</span>' if item["order"] > 0 else '<span style="color:#69758a;">0</span>'
         action_html = '<span style="background:rgba(110,230,238,0.12);color:#6ee6ee;font-size:0.68rem;padding:5px 14px;border-radius:4px;font-weight:600;cursor:pointer;">Confirm Order</span>' if item["has_action"] else '<span style="color:#69758a;font-size:0.75rem;font-style:italic;">No Action Needed</span>'
 
-        rows += f"""
-        <tr style="border-bottom:1px solid rgba(61,73,74,0.08);">
-            <td style="padding:14px;">
-                <div style="color:#dbe2f9;font-weight:700;font-size:0.85rem;">{item['sku']}</div>
-                <div style="color:#69758a;font-size:0.72rem;">{item['name']}</div>
-            </td>
-            <td style="padding:14px;text-align:center;">
-                <div style="color:#6ee6ee;font-weight:700;">{item['stock']:,}</div>
-                <div style="color:{item['stock_color']};font-size:0.65rem;">{item['stock_status']}</div>
-            </td>
-            <td style="padding:14px;text-align:center;color:#bcc9ca;">{item['demand']:,}</td>
-            <td style="padding:14px;text-align:center;color:#bcc9ca;">{item['min_max']}</td>
-            <td style="padding:14px;text-align:center;">{order_html}</td>
-            <td style="padding:14px;text-align:center;">{action_html}</td>
-        </tr>
-        """
+        rows += (
+            f'<tr style="border-bottom:1px solid rgba(61,73,74,0.08);">'
+            f'<td style="padding:14px;">'
+            f'<div style="color:#dbe2f9;font-weight:700;font-size:0.85rem;">{item["sku"]}</div>'
+            f'<div style="color:#69758a;font-size:0.72rem;">{item["name"]}</div>'
+            f'</td>'
+            f'<td style="padding:14px;text-align:center;">'
+            f'<div style="color:#6ee6ee;font-weight:700;">{item["stock"]:,}</div>'
+            f'<div style="color:{item["stock_color"]};font-size:0.65rem;">{item["stock_status"]}</div>'
+            f'</td>'
+            f'<td style="padding:14px;text-align:center;color:#bcc9ca;">{item["demand"]:,}</td>'
+            f'<td style="padding:14px;text-align:center;color:#bcc9ca;">{item["min_max"]}</td>'
+            f'<td style="padding:14px;text-align:center;">{order_html}</td>'
+            f'<td style="padding:14px;text-align:center;">{action_html}</td>'
+            f'</tr>'
+        )
 
     st.markdown(f"""
     <div class="panel" style="overflow-x:auto;">

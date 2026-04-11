@@ -80,25 +80,17 @@ def _render_camera_grid():
 
     for cam_id, zone, status in cams:
         c = colors[status]
-        dot = f"rgba({int(c[1:3],16)},{int(c[3:5],16)},{int(c[5:7],16)},0.8)"
-        grid += f"""
-        <div style="
-            background:#141b2c;border-radius:8px;padding:14px;
-            border:1px solid rgba({int(c[1:3],16)},{int(c[3:5],16)},{int(c[5:7],16)},0.15);
-            display:flex;flex-direction:column;gap:6px;
-        ">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span style="color:#bcc9ca;font-size:0.7rem;font-weight:600;">{cam_id}</span>
-                <span style="width:8px;height:8px;border-radius:50%;background:{dot};"></span>
-            </div>
-            <div style="
-                height:60px;background:#0b1323;border-radius:4px;
-                display:flex;align-items:center;justify-content:center;
-                color:#69758a;font-size:0.65rem;
-            ">&#x1F4F9; {zone}</div>
-            <span style="color:{c};font-size:0.6rem;font-weight:500;">{status.upper()}</span>
-        </div>
-        """
+        r, g, b = int(c[1:3], 16), int(c[3:5], 16), int(c[5:7], 16)
+        grid += (
+            f'<div style="background:#141b2c;border-radius:8px;padding:14px;border:1px solid rgba({r},{g},{b},0.15);display:flex;flex-direction:column;gap:6px;">'
+            f'<div style="display:flex;justify-content:space-between;align-items:center;">'
+            f'<span style="color:#bcc9ca;font-size:0.7rem;font-weight:600;">{cam_id}</span>'
+            f'<span style="width:8px;height:8px;border-radius:50%;background:rgba({r},{g},{b},0.8);"></span>'
+            f'</div>'
+            f'<div style="height:60px;background:#0b1323;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#69758a;font-size:0.65rem;">&#x1F4F9; {zone}</div>'
+            f'<span style="color:{c};font-size:0.6rem;font-weight:500;">{status.upper()}</span>'
+            f'</div>'
+        )
 
     st.markdown(f"""
     <div class="panel" style="padding:16px;">
@@ -123,25 +115,17 @@ def _render_customer_journey():
     funnel_html = ""
     for label, pct, color in stages:
         width = max(40, pct)
-        funnel_html += f"""
-        <div style="margin-bottom:8px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
-                <span style="color:#bcc9ca;font-size:0.75rem;">{label}</span>
-                <span style="color:#dbe2f9;font-size:0.75rem;font-weight:700;">{pct}%</span>
-            </div>
-            <div style="
-                width:{width}%;height:32px;
-                background:linear-gradient(135deg, {color}40, {color}20);
-                border-left:3px solid {color};
-                border-radius:4px;
-                display:flex;align-items:center;padding-left:12px;
-                font-size:0.7rem;font-weight:600;color:{color};
-                transition:width 0.6s ease;
-            ">
-                {pct} customers
-            </div>
-        </div>
-        """
+        funnel_html += (
+            f'<div style="margin-bottom:8px;">'
+            f'<div style="display:flex;justify-content:space-between;margin-bottom:3px;">'
+            f'<span style="color:#bcc9ca;font-size:0.75rem;">{label}</span>'
+            f'<span style="color:#dbe2f9;font-size:0.75rem;font-weight:700;">{pct}%</span>'
+            f'</div>'
+            f'<div style="width:{width}%;height:32px;background:linear-gradient(135deg,{color}40,{color}20);border-left:3px solid {color};border-radius:4px;display:flex;align-items:center;padding-left:12px;font-size:0.7rem;font-weight:600;color:{color};">'
+            f'{pct} customers'
+            f'</div>'
+            f'</div>'
+        )
 
     st.markdown(f"""
     <div class="panel" style="padding:18px;">
@@ -175,20 +159,21 @@ def _render_sensor_dashboard():
     rows = ""
     for zone, total, active, color in zones:
         pct = round(active / total * 100, 1)
-        rows += f"""
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 0;">
-            <div style="flex:1;">
-                <div style="color:#dbe2f9;font-size:0.82rem;font-weight:600;">{zone}</div>
-                <div style="color:#69758a;font-size:0.68rem;">{active}/{total} sensors active</div>
-            </div>
-            <div style="width:100px;">
-                <div class="compliance-bar-track">
-                    <div class="compliance-bar-fill {'healthy' if pct > 90 else 'warning'}" style="width:{pct}%;"></div>
-                </div>
-            </div>
-            <span style="color:{color};font-size:0.75rem;font-weight:700;width:45px;text-align:right;">{pct}%</span>
-        </div>
-        """
+        bar_class = 'healthy' if pct > 90 else 'warning'
+        rows += (
+            f'<div style="display:flex;align-items:center;gap:12px;padding:10px 0;">'
+            f'<div style="flex:1;">'
+            f'<div style="color:#dbe2f9;font-size:0.82rem;font-weight:600;">{zone}</div>'
+            f'<div style="color:#69758a;font-size:0.68rem;">{active}/{total} sensors active</div>'
+            f'</div>'
+            f'<div style="width:100px;">'
+            f'<div class="compliance-bar-track">'
+            f'<div class="compliance-bar-fill {bar_class}" style="width:{pct}%;"></div>'
+            f'</div>'
+            f'</div>'
+            f'<span style="color:{color};font-size:0.75rem;font-weight:700;width:45px;text-align:right;">{pct}%</span>'
+            f'</div>'
+        )
 
     st.markdown(f"""
     <div class="panel" style="padding:18px;">

@@ -56,53 +56,33 @@ def render(store_id: str):
 def _render_camera_feed():
     """Camera feed with detection overlay."""
     det_count = np.random.randint(100, 200)
-    st.markdown(f"""
-    <div style="
-        background: linear-gradient(135deg, #141b2c, #0b1323);
-        border-radius: 12px; border: 1px solid rgba(61,73,74,0.15);
-        height: 300px; position: relative; overflow: hidden;
-    ">
-        <!-- Camera info bar -->
-        <div style="position:absolute;top:10px;left:10px;display:flex;gap:8px;z-index:2;">
-            <span style="background:rgba(110,230,238,0.15);color:#6ee6ee;font-size:0.6rem;padding:4px 10px;border-radius:4px;font-weight:600;">
-                &#x1F7E2; LIVE: CAM_4B_NORTH
-            </span>
-            <span style="background:rgba(20,27,44,0.8);color:#bcc9ca;font-size:0.55rem;padding:4px 8px;border-radius:3px;">
-                4K &bull; 60FPS &bull; INFRARED OFF
-            </span>
-        </div>
-
-        <!-- Detection boxes overlay -->
-        <div style="position:absolute;top:80px;left:60px;width:100px;height:70px;border:2px solid #6ee6ee;border-radius:4px;">
-            <span style="position:absolute;bottom:-18px;left:0;background:#6ee6ee;color:#00373a;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">SKU_0082-OK</span>
-        </div>
-        <div style="position:absolute;top:70px;left:180px;width:90px;height:80px;border:2px solid #6ee6ee;border-radius:4px;">
-            <span style="position:absolute;bottom:-18px;left:0;background:#6ee6ee;color:#00373a;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">SKU_0082-OK</span>
-        </div>
-        <div style="position:absolute;top:65px;left:290px;width:85px;height:75px;border:2px solid #ffb4ab;border-radius:4px;">
-            <span style="position:absolute;bottom:-18px;left:0;background:#ffb4ab;color:#690005;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">SKU_0082-MISS</span>
-        </div>
-        <div style="position:absolute;bottom:60px;left:220px;width:110px;height:60px;border:2px dashed #cecb5b;border-radius:4px;">
-            <span style="position:absolute;bottom:-18px;left:0;background:#cecb5b;color:#333200;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">PRICE_MISMATCH</span>
-        </div>
-
-        <!-- Center placeholder -->
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:#69758a;">
-            &#x1F4F9; Shelf Camera Feed
-        </div>
-
-        <!-- Zoom/capture buttons -->
-        <div style="position:absolute;bottom:10px;left:10px;display:flex;gap:6px;">
-            <div style="width:30px;height:30px;background:rgba(20,27,44,0.8);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#bcc9ca;font-size:0.8rem;cursor:pointer;">&#x1F50D;</div>
-            <div style="width:30px;height:30px;background:rgba(20,27,44,0.8);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#bcc9ca;font-size:0.8rem;cursor:pointer;">&#x1F4F7;</div>
-        </div>
-
-        <!-- Detection count -->
-        <div style="position:absolute;bottom:10px;right:10px;background:rgba(110,230,238,0.15);color:#6ee6ee;font-size:0.6rem;padding:4px 10px;border-radius:4px;font-weight:600;">
-            DETECTIONS: {det_count}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    html = (
+        '<div style="background:linear-gradient(135deg,#141b2c,#0b1323);border-radius:12px;border:1px solid rgba(61,73,74,0.15);height:300px;position:relative;overflow:hidden;">'
+        '<div style="position:absolute;top:10px;left:10px;display:flex;gap:8px;z-index:2;">'
+        '<span style="background:rgba(110,230,238,0.15);color:#6ee6ee;font-size:0.6rem;padding:4px 10px;border-radius:4px;font-weight:600;">&#x1F7E2; LIVE: CAM_4B_NORTH</span>'
+        '<span style="background:rgba(20,27,44,0.8);color:#bcc9ca;font-size:0.55rem;padding:4px 8px;border-radius:3px;">4K &bull; 60FPS &bull; INFRARED OFF</span>'
+        '</div>'
+        '<div style="position:absolute;top:80px;left:60px;width:100px;height:70px;border:2px solid #6ee6ee;border-radius:4px;">'
+        '<span style="position:absolute;bottom:-18px;left:0;background:#6ee6ee;color:#00373a;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">SKU_0082-OK</span>'
+        '</div>'
+        '<div style="position:absolute;top:70px;left:180px;width:90px;height:80px;border:2px solid #6ee6ee;border-radius:4px;">'
+        '<span style="position:absolute;bottom:-18px;left:0;background:#6ee6ee;color:#00373a;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">SKU_0082-OK</span>'
+        '</div>'
+        '<div style="position:absolute;top:65px;left:290px;width:85px;height:75px;border:2px solid #ffb4ab;border-radius:4px;">'
+        '<span style="position:absolute;bottom:-18px;left:0;background:#ffb4ab;color:#690005;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">SKU_0082-MISS</span>'
+        '</div>'
+        '<div style="position:absolute;bottom:60px;left:220px;width:110px;height:60px;border:2px dashed #cecb5b;border-radius:4px;">'
+        '<span style="position:absolute;bottom:-18px;left:0;background:#cecb5b;color:#333200;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">PRICE_MISMATCH</span>'
+        '</div>'
+        '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#69758a;">&#x1F4F9; Shelf Camera Feed</div>'
+        '<div style="position:absolute;bottom:10px;left:10px;display:flex;gap:6px;">'
+        '<div style="width:30px;height:30px;background:rgba(20,27,44,0.8);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#bcc9ca;font-size:0.8rem;cursor:pointer;">&#x1F50D;</div>'
+        '<div style="width:30px;height:30px;background:rgba(20,27,44,0.8);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#bcc9ca;font-size:0.8rem;cursor:pointer;">&#x1F4F7;</div>'
+        '</div>'
+        f'<div style="position:absolute;bottom:10px;right:10px;background:rgba(110,230,238,0.15);color:#6ee6ee;font-size:0.6rem;padding:4px 10px;border-radius:4px;font-weight:600;">DETECTIONS: {det_count}</div>'
+        '</div>'
+    )
+    st.markdown(html, unsafe_allow_html=True)
 
 
 def _render_planogram_health():
@@ -130,25 +110,22 @@ def _render_planogram_health():
         """, unsafe_allow_html=True)
 
     with col2:
-        st.markdown(f"""
-        <div class="panel" style="padding:18px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                <span style="color:#bcc9ca;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;">Health Index</span>
-                <span style="color:#cecb5b;font-size:0.9rem;">&#x26A1;</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:14px;">
-                <div style="
-                    width:50px;height:50px;border-radius:50%;
-                    border:3px solid #6ee6ee; display:flex;align-items:center;justify-content:center;
-                    color:#6ee6ee;font-size:0.8rem;font-weight:700;
-                ">{health_pct}%</div>
-                <div>
-                    <div style="color:#dbe2f9;font-size:1.5rem;font-weight:900;">{health_delta:.0f}% Low</div>
-                    <div style="color:#69758a;font-size:0.68rem;text-transform:uppercase;">Velocity: High (Aisle 4)</div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        health_html = (
+            '<div class="panel" style="padding:18px;">'
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'
+            '<span style="color:#bcc9ca;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;font-weight:500;">Health Index</span>'
+            '<span style="color:#cecb5b;font-size:0.9rem;">&#x26A1;</span>'
+            '</div>'
+            '<div style="display:flex;align-items:center;gap:14px;">'
+            f'<div style="width:50px;height:50px;border-radius:50%;border:3px solid #6ee6ee;display:flex;align-items:center;justify-content:center;color:#6ee6ee;font-size:0.8rem;font-weight:700;">{health_pct}%</div>'
+            '<div>'
+            f'<div style="color:#dbe2f9;font-size:1.5rem;font-weight:900;">{health_delta:.0f}% Low</div>'
+            '<div style="color:#69758a;font-size:0.68rem;text-transform:uppercase;">Velocity: High (Aisle 4)</div>'
+            '</div>'
+            '</div>'
+            '</div>'
+        )
+        st.markdown(health_html, unsafe_allow_html=True)
 
 
 def _render_high_priority_alerts():
@@ -198,40 +175,39 @@ def _render_cv_performance():
     """CV performance metrics panel."""
     latency = np.random.randint(18, 32)
     confidence = round(np.random.uniform(98.5, 99.8), 1)
+    lat_w = min(100, latency * 3)
 
-    st.markdown(f"""
-    <div class="panel" style="padding:18px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
-            <span style="color:#6ee6ee;">&#x2699;</span>
-            <span style="color:#dbe2f9;font-size:0.92rem;font-weight:700;">CV Performance</span>
-        </div>
-
-        <div style="margin-bottom:14px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                <span style="color:#bcc9ca;font-size:0.75rem;">Inference Latency</span>
-                <span style="color:#dbe2f9;font-size:0.75rem;font-weight:700;">{latency}ms</span>
-            </div>
-            <div class="compliance-bar-track">
-                <div class="compliance-bar-fill healthy" style="width:{min(100, latency*3)}%;"></div>
-            </div>
-        </div>
-
-        <div style="margin-bottom:14px;">
-            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-                <span style="color:#bcc9ca;font-size:0.75rem;">Model Confidence</span>
-                <span style="color:#dbe2f9;font-size:0.75rem;font-weight:700;">{confidence}%</span>
-            </div>
-            <div class="compliance-bar-track">
-                <div class="compliance-bar-fill healthy" style="width:{confidence}%;"></div>
-            </div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(61,73,74,0.1);">
-            <span style="color:#bcc9ca;font-size:0.75rem;">Total SKU Detection Area</span>
-            <span style="color:#dbe2f9;font-size:0.82rem;font-weight:700;">14.2 sq.m</span>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    cv_html = (
+        '<div class="panel" style="padding:18px;">'
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">'
+        '<span style="color:#6ee6ee;">&#x2699;</span>'
+        '<span style="color:#dbe2f9;font-size:0.92rem;font-weight:700;">CV Performance</span>'
+        '</div>'
+        '<div style="margin-bottom:14px;">'
+        '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">'
+        f'<span style="color:#bcc9ca;font-size:0.75rem;">Inference Latency</span>'
+        f'<span style="color:#dbe2f9;font-size:0.75rem;font-weight:700;">{latency}ms</span>'
+        '</div>'
+        '<div class="compliance-bar-track">'
+        f'<div class="compliance-bar-fill healthy" style="width:{lat_w}%;"></div>'
+        '</div>'
+        '</div>'
+        '<div style="margin-bottom:14px;">'
+        '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">'
+        f'<span style="color:#bcc9ca;font-size:0.75rem;">Model Confidence</span>'
+        f'<span style="color:#dbe2f9;font-size:0.75rem;font-weight:700;">{confidence}%</span>'
+        '</div>'
+        '<div class="compliance-bar-track">'
+        f'<div class="compliance-bar-fill healthy" style="width:{confidence}%;"></div>'
+        '</div>'
+        '</div>'
+        '<div style="display:flex;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(61,73,74,0.1);">'
+        '<span style="color:#bcc9ca;font-size:0.75rem;">Total SKU Detection Area</span>'
+        '<span style="color:#dbe2f9;font-size:0.82rem;font-weight:700;">14.2 sq.m</span>'
+        '</div>'
+        '</div>'
+    )
+    st.markdown(cv_html, unsafe_allow_html=True)
 
 
 def _render_sku_table():
@@ -264,33 +240,33 @@ def _render_sku_table():
 
         action_html = f'<span style="background:rgba(110,230,238,0.12);color:#6ee6ee;font-size:0.65rem;padding:4px 12px;border-radius:4px;font-weight:600;cursor:pointer;">{action}</span>' if action not in ["&vellip;"] else f'<span style="color:#69758a;font-size:1.2rem;cursor:pointer;">{action}</span>'
 
-        rows_html += f"""
-        <tr style="border-bottom:1px solid rgba(61,73,74,0.08);">
-            <td style="padding:12px 14px;">
-                <div style="display:flex;align-items:center;gap:10px;">
-                    <div style="width:36px;height:36px;background:#222a3b;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#69758a;font-size:0.7rem;">&#x1F4E6;</div>
-                    <div>
-                        <div style="color:#dbe2f9;font-size:0.82rem;font-weight:600;">{name}</div>
-                        <div style="color:#69758a;font-size:0.68rem;">{sku_id}</div>
-                    </div>
-                </div>
-            </td>
-            <td style="padding:12px 14px;text-align:center;">
-                <span style="color:#bcc9ca;">{expected}</span> /
-                <span style="color:#6ee6ee;font-weight:700;">{detected}</span>
-                <span style="margin-left:4px;">{check_icon}</span>
-            </td>
-            <td style="padding:12px 14px;text-align:center;">
-                <span class="sku-status {s_class}">{status}</span>
-            </td>
-            <td style="padding:12px 14px;text-align:center;">
-                {price_icon} {price}
-            </td>
-            <td style="padding:12px 14px;text-align:center;">
-                {action_html}
-            </td>
-        </tr>
-        """
+        rows_html += (
+            f'<tr style="border-bottom:1px solid rgba(61,73,74,0.08);">'
+            f'<td style="padding:12px 14px;">'
+            f'<div style="display:flex;align-items:center;gap:10px;">'
+            f'<div style="width:36px;height:36px;background:#222a3b;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#69758a;font-size:0.7rem;">&#x1F4E6;</div>'
+            f'<div>'
+            f'<div style="color:#dbe2f9;font-size:0.82rem;font-weight:600;">{name}</div>'
+            f'<div style="color:#69758a;font-size:0.68rem;">{sku_id}</div>'
+            f'</div>'
+            f'</div>'
+            f'</td>'
+            f'<td style="padding:12px 14px;text-align:center;">'
+            f'<span style="color:#bcc9ca;">{expected}</span> / '
+            f'<span style="color:#6ee6ee;font-weight:700;">{detected}</span>'
+            f'<span style="margin-left:4px;">{check_icon}</span>'
+            f'</td>'
+            f'<td style="padding:12px 14px;text-align:center;">'
+            f'<span class="sku-status {s_class}">{status}</span>'
+            f'</td>'
+            f'<td style="padding:12px 14px;text-align:center;">'
+            f'{price_icon} {price}'
+            f'</td>'
+            f'<td style="padding:12px 14px;text-align:center;">'
+            f'{action_html}'
+            f'</td>'
+            f'</tr>'
+        )
 
     st.markdown(f"""
     <div class="panel" style="overflow-x:auto;">
