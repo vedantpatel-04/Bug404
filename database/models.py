@@ -171,6 +171,20 @@ CREATE INDEX IF NOT EXISTS idx_forecasts_sku ON forecasts(sku_id, store_id, fore
 CREATE INDEX IF NOT EXISTS idx_pos_date ON pos_transactions(date, store_id, sku_id);
 CREATE INDEX IF NOT EXISTS idx_weather_date ON weather_data(date, store_id);
 CREATE INDEX IF NOT EXISTS idx_compliance_store ON compliance_reports(store_id, checked_at);
+
+-- Customer engagement (views vs picks for shelf optimization)
+CREATE TABLE IF NOT EXISTS customer_engagement (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    store_id TEXT NOT NULL,
+    sku_id TEXT NOT NULL,
+    category TEXT NOT NULL DEFAULT '',
+    impression_count INTEGER NOT NULL,
+    pick_count INTEGER NOT NULL,
+    conversion_rate REAL NOT NULL,
+    FOREIGN KEY (store_id) REFERENCES stores(store_id),
+    FOREIGN KEY (sku_id) REFERENCES products(sku_id)
+);
+CREATE INDEX IF NOT EXISTS idx_engagement_store_sku ON customer_engagement(store_id, sku_id);
 """
 
 

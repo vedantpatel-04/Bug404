@@ -65,6 +65,7 @@ with st.sidebar:
         "Dashboard",
         "Live Monitor",
         "Shelf Analysis",
+        "Shelf Optimizer",
         "Forecast",
         "Alerts",
         "Smart Store",
@@ -145,6 +146,10 @@ elif page == "Alerts":
 elif page == "Smart Store":
     from dashboard.views import smart_store
     smart_store.render(selected_store)
+
+elif page == "Shelf Optimizer":
+    from dashboard.views import shelf_optimizer_page
+    shelf_optimizer_page.render(selected_store)
 
 elif page == "Settings":
     from dashboard.views import analytics_page

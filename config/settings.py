@@ -96,3 +96,22 @@ DASHBOARD_REFRESH_INTERVAL = 30  # seconds
 STREAMLIT_PAGE_TITLE = "ShelfIQ — Retail Shelf Intelligence"
 STREAMLIT_PAGE_ICON = "🛒"
 STREAMLIT_LAYOUT = "wide"
+
+# ─── Shelf Optimizer ─────────────────────────────────────────
+OPTIMIZER_OUTPUT_DIR = DATA_DIR / "optimized_planograms"
+OPTIMIZER_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+EYE_LEVEL_SHELVES: list[int] = [2, 3]          # 1-indexed shelf numbers considered "eye level"
+TOP_PERFORMER_PERCENTILE: float = 0.80          # top 20% = above 80th percentile
+ENGAGEMENT_DATA_PATH = POS_DATA_DIR / "customer_engagement.csv"
+# Composite score weights (must sum to 1.0)
+SCORE_WEIGHT_VELOCITY: float = 0.40
+SCORE_WEIGHT_PROFIT: float = 0.35
+SCORE_WEIGHT_ENGAGEMENT: float = 0.25
+# Visibility multipliers by shelf position (1-indexed)
+SHELF_VISIBILITY_MULTIPLIER: dict[int, float] = {
+    1: 0.7,   # bottom shelf — low visibility
+    2: 1.3,   # eye level — high visibility
+    3: 1.5,   # prime eye level — highest visibility
+    4: 1.0,   # upper shelf — moderate
+    5: 0.8,   # top shelf — lower visibility
+}
