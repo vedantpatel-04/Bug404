@@ -90,70 +90,264 @@ def render(store_id: str, store_options: dict):
 
 
 def _render_store_heatmap(store_id: str):
-    """Render the store floor heatmap matching the reference."""
+    """Render the dynamic store floor plan with detection overlay (CHANGE 4)."""
     st.markdown("""
     <div class="panel-low">
         <div class="panel-header">
             <div>
-                <h2 style="color: #dbe2f9; font-size: 1.1rem; font-weight: 700; margin:0;">Store Floor Heatmap</h2>
-                <p style="color: #bcc9ca; font-size: 0.72rem; margin:2px 0 0 0;">High-frequency stockout zones</p>
+                <h2 style="color: #dbe2f9; font-size: 1.1rem; font-weight: 700; margin:0;">Store Floor Plan — Detection Overlay</h2>
+                <p style="color: #bcc9ca; font-size: 0.72rem; margin:2px 0 0 0;">Real-time shelf status from CV pipeline</p>
             </div>
             <div style="display: flex; gap: 14px; align-items: center; font-size: 0.7rem; color: #bcc9ca;">
-                <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#182030;"></span> Low Risk</span>
-                <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:rgba(110,230,238,0.4);"></span> Medium</span>
-                <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#6ee6ee;"></span> Critical</span>
+                <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span> Healthy</span>
+                <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#eab308;"></span> Low Stock</span>
+                <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span> Stockout</span>
+                <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:50%;background:#8b5cf6;"></span> Planogram Violation</span>
             </div>
         </div>
     """, unsafe_allow_html=True)
 
-    # Build heatmap grid
-    aisles = ["Produce", "Bakery", "Beverages", "Dairy", "Snacks", "Frozen"]
-    sections = [f"S{j+1}" for j in range(8)]
-    np.random.seed(42)
-    data = np.random.poisson(3, (len(aisles), len(sections))).astype(float)
-    # Create hotspots
-    data[3, 2:5] += np.random.uniform(6, 12, 3)  # Dairy hotspot
-    data[2, 1:3] += np.random.uniform(4, 8, 2)    # Beverages
+    # ── Fetch shelf status data ───────────────────────────────────
+    floor_data = _get_floor_plan_data(store_id, num_aisles=5, sections_per_aisle=3)
 
-    fig = go.Figure(go.Heatmap(
-        z=data,
-        x=sections,
-        y=[f"Aisle {i+1:02d}: {a}" for i, a in enumerate(aisles)],
-        colorscale=[
-            [0, "#182030"],
-            [0.3, "rgba(110,230,238,0.15)"],
-            [0.6, "rgba(110,230,238,0.4)"],
-            [1.0, "#6ee6ee"],
-        ],
-        hovertemplate="<b>%{y}</b> %{x}<br>Stockout Events: %{z:.0f}<extra></extra>",
-        showscale=False,
-    ))
+    # ── Build Plotly scatter floor plan ────────────────────────────
+    STATUS_COLORS = {
+        "FULL": "#22c55e",
+        "LOW": "#eab308",
+        "EMPTY": "#ef4444",
+        "VIOLATION": "#8b5cf6",
+    }
+    STATUS_SYMBOLS = {
+        "FULL": "square",
+        "LOW": "diamond",
+        "EMPTY": "x",
+        "VIOLATION": "triangle-up",
+    }
+
+    fig = go.Figure()
+
+    # Draw aisle background rectangles
+    for aisle_idx in range(5):
+        y = aisle_idx
+        fig.add_shape(
+            type="rect",
+            x0=-0.4, x1=2.4, y0=y - 0.35, y1=y + 0.35,
+            fillcolor="rgba(30,30,60,0.35)",
+            line=dict(color="rgba(110,230,238,0.1)", width=1),
+            layer="below",
+        )
+
+    # Group markers by status for a clean legend
+    grouped = {}
+    for item in floor_data:
+        s = item["status"]
+        if s not in grouped:
+            grouped[s] = {"x": [], "y": [], "text": [], "hover": []}
+        grouped[s]["x"].append(item["section"])
+        grouped[s]["y"].append(item["aisle_idx"])
+        grouped[s]["text"].append(item["label"])
+        grouped[s]["hover"].append(item["hover"])
+
+    for status, pts in grouped.items():
+        fig.add_trace(go.Scatter(
+            x=pts["x"],
+            y=pts["y"],
+            mode="markers+text",
+            marker=dict(
+                color=STATUS_COLORS.get(status, "#bcc9ca"),
+                size=28,
+                symbol=STATUS_SYMBOLS.get(status, "square"),
+                line=dict(width=1.5, color="rgba(255,255,255,0.2)"),
+            ),
+            text=pts["text"],
+            textposition="middle center",
+            textfont=dict(size=8, color="white"),
+            hovertext=pts["hover"],
+            hovertemplate="%{hovertext}<extra></extra>",
+            name=status.capitalize(),
+            showlegend=False,
+        ))
+
+    # Layout
+    aisle_labels = [f"Aisle {i+1}" for i in range(5)]
+    section_labels = [f"Section {j+1}" for j in range(3)]
+
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="#060e1e",
+        plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#bcc9ca", family="Inter", size=11),
-        height=320,
-        margin=dict(l=130, r=10, t=10, b=30),
-        yaxis=dict(autorange="reversed", gridcolor="rgba(61,73,74,0.1)"),
-        xaxis=dict(gridcolor="rgba(61,73,74,0.1)"),
+        height=340,
+        margin=dict(l=100, r=30, t=10, b=50),
+        xaxis=dict(
+            title="Shelf Section",
+            ticktext=section_labels,
+            tickvals=[0, 1, 2],
+            gridcolor="rgba(61,73,74,0.08)",
+            range=[-0.6, 2.6],
+        ),
+        yaxis=dict(
+            title="",
+            ticktext=aisle_labels,
+            tickvals=list(range(5)),
+            gridcolor="rgba(61,73,74,0.08)",
+            autorange="reversed",
+            range=[-0.6, 4.6],
+        ),
+        hoverlabel=dict(
+            bgcolor="rgba(20,27,44,0.95)",
+            font_color="#dbe2f9",
+            bordercolor="rgba(110,230,238,0.3)",
+        ),
     )
+
     st.plotly_chart(fig, use_container_width=True)
 
-    # Bottom info strip
-    st.markdown("""
+    # Bottom stats strip
+    full_ct = sum(1 for d in floor_data if d["status"] == "FULL")
+    low_ct = sum(1 for d in floor_data if d["status"] == "LOW")
+    empty_ct = sum(1 for d in floor_data if d["status"] == "EMPTY")
+    viol_ct = sum(1 for d in floor_data if d["status"] == "VIOLATION")
+
+    st.markdown(f"""
         <div style="background:#182030;padding:10px 20px;display:flex;justify-content:space-around;
                     font-size:0.72rem;color:#bcc9ca;border-radius:0 0 12px 12px;">
             <span style="display:flex;align-items:center;gap:6px;">
-                <span style="width:6px;height:6px;border-radius:50%;background:#6ee6ee;"></span>
-                Highest Velocity: Beverages
+                <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;"></span>
+                Healthy: {full_ct}
             </span>
             <span style="display:flex;align-items:center;gap:6px;">
-                <span style="width:6px;height:6px;border-radius:50%;background:#cecb5b;"></span>
-                Delayed Restock: Fresh Produce
+                <span style="width:6px;height:6px;border-radius:50%;background:#eab308;"></span>
+                Low Stock: {low_ct}
+            </span>
+            <span style="display:flex;align-items:center;gap:6px;">
+                <span style="width:6px;height:6px;border-radius:50%;background:#ef4444;"></span>
+                Stockout: {empty_ct}
+            </span>
+            <span style="display:flex;align-items:center;gap:6px;">
+                <span style="width:6px;height:6px;border-radius:50%;background:#8b5cf6;"></span>
+                Violations: {viol_ct}
             </span>
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+
+def _get_floor_plan_data(store_id: str, num_aisles: int = 5, sections_per_aisle: int = 3) -> list:
+    """
+    Get shelf status for the floor plan grid.
+    Reads latest detections + compliance from SQLite;
+    falls back to seeded synthetic data if database is sparse.
+    """
+    from data.generators.generate_pos_data import PRODUCT_NAMES
+
+    floor = []
+
+    # ── Try real database data ────────────────────────────────────
+    try:
+        from database.db_manager import db
+
+        # Get latest detections grouped by aisle + shelf
+        detections = db.execute(
+            "SELECT aisle_id, shelf_id, stock_level, sku_id "
+            "FROM detections WHERE store_id = ? "
+            "ORDER BY detected_at DESC LIMIT ?",
+            (store_id, num_aisles * sections_per_aisle * 3),
+        )
+
+        # Get recent planogram violations
+        violations = set()
+        try:
+            viol_rows = db.execute(
+                "SELECT aisle_id, shelf_id FROM alerts "
+                "WHERE store_id = ? AND alert_type = 'PLANOGRAM_VIOLATION' "
+                "AND acknowledged = 0",
+                (store_id,),
+            )
+            for v in viol_rows:
+                violations.add((v.get("aisle_id", ""), v.get("shelf_id", "")))
+        except Exception:
+            pass
+
+        if detections and len(detections) >= num_aisles:
+            # Build a lookup of the latest status per (aisle, shelf) pair
+            seen = {}
+            for d in detections:
+                key = (d.get("aisle_id", ""), d.get("shelf_id", ""))
+                if key not in seen:
+                    seen[key] = d
+
+            for aisle_idx in range(num_aisles):
+                for sec_idx in range(sections_per_aisle):
+                    aisle_id = f"A{aisle_idx + 1:02d}"
+                    shelf_id = f"SEC-{sec_idx + 1:02d}"
+                    key = (aisle_id, shelf_id)
+
+                    det = seen.get(key, None)
+                    if det:
+                        status = det.get("stock_level", "FULL")
+                        sku = det.get("sku_id", "")
+                        # Check for planogram violations — overrides status color
+                        if key in violations:
+                            status = "VIOLATION"
+                        sku_idx = int(sku.replace("SKU", "")) - 1 if sku and sku.startswith("SKU") else 0
+                        name = PRODUCT_NAMES[sku_idx % len(PRODUCT_NAMES)] if sku else "Unknown"
+                    else:
+                        status = "FULL"
+                        name = "No data"
+                        sku = ""
+
+                    fill_pct = {"FULL": "85%", "LOW": "40%", "EMPTY": "0%", "VIOLATION": "—"}[status]
+                    floor.append({
+                        "aisle_idx": aisle_idx,
+                        "section": sec_idx,
+                        "status": status,
+                        "label": f"A{aisle_idx+1}\nS{sec_idx+1}",
+                        "hover": (
+                            f"<b>Aisle {aisle_idx+1}, Section {sec_idx+1}</b><br>"
+                            f"SKU: {sku} — {name}<br>"
+                            f"Status: {status}<br>"
+                            f"Fill: {fill_pct}"
+                        ),
+                    })
+
+            if floor:
+                return floor
+    except Exception:
+        pass
+
+    # ── Fallback: synthetic data ──────────────────────────────────
+    np.random.seed(hash(store_id + "floorplan") % 2**31)
+    for aisle_idx in range(num_aisles):
+        for sec_idx in range(sections_per_aisle):
+            rand = np.random.random()
+            if rand < 0.55:
+                status = "FULL"
+            elif rand < 0.75:
+                status = "LOW"
+            elif rand < 0.88:
+                status = "EMPTY"
+            else:
+                status = "VIOLATION"
+
+            sku_num = np.random.randint(1, 51)
+            sku_id = f"SKU{sku_num:03d}"
+            name = PRODUCT_NAMES[(sku_num - 1) % len(PRODUCT_NAMES)]
+            fill_pct = {"FULL": f"{np.random.randint(75,100)}%", "LOW": f"{np.random.randint(30,55)}%", "EMPTY": f"{np.random.randint(0,15)}%", "VIOLATION": "—"}[status]
+
+            floor.append({
+                "aisle_idx": aisle_idx,
+                "section": sec_idx,
+                "status": status,
+                "label": f"A{aisle_idx+1}\nS{sec_idx+1}",
+                "hover": (
+                    f"<b>Aisle {aisle_idx+1}, Section {sec_idx+1}</b><br>"
+                    f"SKU: {sku_id} — {name}<br>"
+                    f"Status: {status}<br>"
+                    f"Fill: {fill_pct}"
+                ),
+            })
+
+    return floor
 
 
 def _render_critical_alerts():

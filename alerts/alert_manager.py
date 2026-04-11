@@ -9,7 +9,7 @@ import numpy as np
 from datetime import datetime, timedelta
 from typing import Optional
 
-from alerts.alert_models import Alert, SUGGESTED_ACTIONS
+from alerts.alert_models import Alert, SUGGESTED_ACTIONS, generate_corrective_action
 from config.settings import (
     ALERT_COOLDOWN_MINUTES, STOCKOUT_SEVERITY,
     LOW_STOCK_SEVERITY, PLANOGRAM_VIOLATION_SEVERITY, PRICE_MISMATCH_SEVERITY,
@@ -69,6 +69,14 @@ class AlertManager:
         actions = SUGGESTED_ACTIONS.get(alert_type, ["Investigate and resolve"])
         suggested = actions[0] if actions else "Investigate and resolve"
 
+        # Generate context-aware corrective action (CHANGE 5)
+        corrective = generate_corrective_action(
+            alert_type=alert_type,
+            sku_id=sku_id,
+            aisle_id=aisle_id,
+            shelf_id=shelf_id,
+        )
+
         alert = Alert(
             alert_type=alert_type,
             severity=severity,
@@ -79,6 +87,7 @@ class AlertManager:
             message=message,
             revenue_impact=round(revenue_impact, 2),
             suggested_action=suggested,
+            corrective_action=corrective,
             priority_score=round(priority_score, 2),
             created_at=now.isoformat(),
         )
@@ -147,17 +156,29 @@ class AlertManager:
 
         for i in range(min(count, len(alert_templates))):
             atype, msg, sku, sev, impact = alert_templates[i]
+            aid = f"A{np.random.randint(1, 7):02d}"
+            sid = f"S{np.random.randint(1, 5):02d}"
+
+            # Generate corrective action (CHANGE 5)
+            corrective = generate_corrective_action(
+                alert_type=atype,
+                sku_id=sku,
+                aisle_id=aid,
+                shelf_id=sid,
+            )
+
             alert = Alert(
                 alert_id=i + 1,
                 alert_type=atype,
                 severity=sev,
                 store_id=store_id,
-                aisle_id=f"A{np.random.randint(1, 7):02d}",
-                shelf_id=f"S{np.random.randint(1, 5):02d}",
+                aisle_id=aid,
+                shelf_id=sid,
                 sku_id=sku,
                 message=msg,
                 revenue_impact=impact + np.random.uniform(-20, 50),
                 suggested_action=SUGGESTED_ACTIONS.get(atype, ["Investigate"])[0],
+                corrective_action=corrective,
                 priority_score=sev * impact * np.random.uniform(0.8, 1.2),
                 created_at=(datetime.now() - timedelta(minutes=np.random.randint(1, 120))).isoformat(),
             )

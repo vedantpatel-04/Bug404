@@ -72,9 +72,21 @@ def engineer_features(pos_df: pd.DataFrame, weather_df: pd.DataFrame) -> pd.Data
     # Merge weather data
     if not weather_df.empty:
         weather_df["date"] = pd.to_datetime(weather_df["date"])
-        weather_cols = ["date", "store_id", "temperature_c", "precipitation_mm", "humidity_pct", "is_holiday"]
+        weather_cols = [
+            "date", "store_id", "temperature_c", "precipitation_mm",
+            "humidity_pct", "is_holiday",
+        ]
+        # Include event columns if present (CHANGE 7)
+        for ecol in ["is_local_event", "event_type", "event_magnitude"]:
+            if ecol in weather_df.columns:
+                weather_cols.append(ecol)
         weather_subset = weather_df[weather_cols].drop_duplicates(subset=["date", "store_id"])
         df = df.merge(weather_subset, on=["date", "store_id"], how="left")
+
+        # One-hot encode event_type for use as regressors (CHANGE 7)
+        if "event_type" in df.columns:
+            event_dummies = pd.get_dummies(df["event_type"], prefix="evt").astype(int)
+            df = pd.concat([df, event_dummies], axis=1)
 
     # Fill NaN values
     numeric_cols = df.select_dtypes(include=[np.number]).columns
@@ -113,6 +125,19 @@ def prepare_prophet_data(df: pd.DataFrame, sku_id: str, store_id: str) -> pd.Dat
         hol.columns = ["ds", "holiday_flag"]
         daily = daily.merge(hol, on="ds", how="left")
         daily["holiday_flag"] = daily["holiday_flag"].fillna(0)
+
+    # Event regressors (CHANGE 7)
+    if "is_local_event" in subset.columns:
+        evt = subset.groupby("date")["is_local_event"].max().reset_index()
+        evt.columns = ["ds", "is_local_event"]
+        daily = daily.merge(evt, on="ds", how="left")
+        daily["is_local_event"] = daily["is_local_event"].fillna(0)
+
+    if "event_magnitude" in subset.columns:
+        mag = subset.groupby("date")["event_magnitude"].max().reset_index()
+        mag.columns = ["ds", "event_magnitude"]
+        daily = daily.merge(mag, on="ds", how="left")
+        daily["event_magnitude"] = daily["event_magnitude"].fillna(0)
 
     return daily.sort_values("ds").reset_index(drop=True)
 

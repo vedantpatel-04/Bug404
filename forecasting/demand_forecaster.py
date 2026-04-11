@@ -73,9 +73,9 @@ class DemandForecaster:
             interval_width=0.9,
         )
 
-        # Add regressors if available
+        # Add regressors if available (CHANGE 7: added event regressors)
         regressors = []
-        for col in ["promotion", "temperature", "holiday_flag"]:
+        for col in ["promotion", "temperature", "holiday_flag", "is_local_event", "event_magnitude"]:
             if col in data.columns:
                 model.add_regressor(col)
                 regressors.append(col)

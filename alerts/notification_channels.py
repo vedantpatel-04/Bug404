@@ -32,6 +32,7 @@ class DashboardNotifier:
             "store_id": alert.store_id,
             "timestamp": alert.created_at or datetime.now().isoformat(),
             "action": alert.suggested_action,
+            "corrective_action": alert.corrective_action,  # CHANGE 5
         })
         return True
 

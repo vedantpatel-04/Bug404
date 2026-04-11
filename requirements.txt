@@ -10,6 +10,7 @@ ultralytics>=8.0.0
 torch>=2.0.0
 torchvision>=0.15.0
 easyocr>=1.7.0
+git+https://github.com/openai/CLIP.git
 
 # Forecasting
 prophet>=1.1.4

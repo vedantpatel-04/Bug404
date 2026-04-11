@@ -65,7 +65,7 @@ def render(store_id: str):
 
 
 def _render_alert_inbox():
-    """Alert inbox with priority sorting."""
+    """Alert inbox with priority sorting and corrective actions (CHANGE 5)."""
     st.markdown("""
     <div class="panel" style="height:100%;">
         <div class="panel-header">
@@ -81,14 +81,49 @@ def _render_alert_inbox():
         <div style="padding:14px;">
     """, unsafe_allow_html=True)
 
-    alerts = [
-        {"impact": "HIGH IMPACT &mdash; $1,200", "color": "#ffb4ab", "time": "2m ago",
-         "title": "Shelf Stockout: Premium Gin", "detail": "SKU: 004829 &bull; Aisle 4B"},
-        {"impact": "MED IMPACT &mdash; $450", "color": "#cecb5b", "time": "14m ago",
-         "title": "Misplaced Inventory", "detail": "SKU: 119203 &bull; Aisle 12"},
-        {"impact": "LOW IMPACT &mdash; $85", "color": "#bcc9ca", "time": "45m ago",
-         "title": "Price Tag Mismatch", "detail": "SKU: 092831 &bull; Aisle 22"},
-    ]
+    # ── Pull alerts with corrective actions from the manager ──────
+    try:
+        from alerts.alert_manager import AlertManager
+        mgr = AlertManager()
+        live_alerts = mgr.generate_sample_alerts(count=5)
+    except Exception:
+        live_alerts = []
+
+    if not live_alerts:
+        # Fallback to static data if manager fails
+        alerts = [
+            {"impact": "HIGH IMPACT &mdash; $1,200", "color": "#ffb4ab", "time": "2m ago",
+             "title": "Shelf Stockout: Premium Gin", "detail": "SKU: 004829 &bull; Aisle 4B",
+             "corrective": "Restock Premium Gin at Aisle 4B. Suggested reorder qty: 12 units."},
+            {"impact": "MED IMPACT &mdash; $450", "color": "#cecb5b", "time": "14m ago",
+             "title": "Misplaced Inventory", "detail": "SKU: 119203 &bull; Aisle 12",
+             "corrective": "Move product from current position to correct position per planogram layout."},
+            {"impact": "LOW IMPACT &mdash; $85", "color": "#bcc9ca", "time": "45m ago",
+             "title": "Price Tag Mismatch", "detail": "SKU: 092831 &bull; Aisle 22",
+             "corrective": "Update price tag at Aisle 22 from detected price to planogram price."},
+        ]
+    else:
+        # Convert live Alert objects to display-friendly dicts
+        impact_labels = {5: "HIGH IMPACT", 4: "HIGH IMPACT", 3: "MED IMPACT", 2: "LOW IMPACT", 1: "LOW IMPACT"}
+        impact_colors = {5: "#ffb4ab", 4: "#ffb4ab", 3: "#cecb5b", 2: "#bcc9ca", 1: "#bcc9ca"}
+        alerts = []
+        for a in live_alerts[:5]:
+            from datetime import datetime
+            try:
+                dt = datetime.fromisoformat(a.created_at)
+                mins_ago = max(1, int((datetime.now() - dt).total_seconds() / 60))
+                time_str = f"{mins_ago}m ago"
+            except Exception:
+                time_str = "just now"
+
+            alerts.append({
+                "impact": f"{impact_labels.get(a.severity, 'ALERT')} &mdash; ${a.revenue_impact:,.0f}",
+                "color": impact_colors.get(a.severity, "#bcc9ca"),
+                "time": time_str,
+                "title": a.message,
+                "detail": f"{a.sku_id} &bull; {a.aisle_id}/{a.shelf_id}",
+                "corrective": a.corrective_action or a.suggested_action,
+            })
 
     for a in alerts:
         r, g, b = int(a['color'][1:3], 16), int(a['color'][3:5], 16), int(a['color'][5:7], 16)
@@ -103,6 +138,10 @@ def _render_alert_inbox():
             f'<div style="flex:1;">'
             f'<div style="color:#dbe2f9;font-weight:700;font-size:0.88rem;">{a["title"]}</div>'
             f'<div style="color:#bcc9ca;font-size:0.72rem;margin-top:2px;">{a["detail"]}</div>'
+            # Corrective action line (CHANGE 5)
+            f'<div style="color:#6ee6ee;font-size:0.70rem;margin-top:6px;padding:6px 8px;background:rgba(110,230,238,0.06);border-radius:6px;border-left:2px solid #6ee6ee;">'
+            f'&#x1F527; <b>Action:</b> {a["corrective"]}'
+            f'</div>'
             f'<div style="display:flex;gap:8px;margin-top:10px;">'
             f'<span style="background:rgba(110,230,238,0.12);color:#6ee6ee;font-size:0.65rem;padding:5px 12px;border-radius:4px;font-weight:600;cursor:pointer;">&#x1F4CB; Assign</span>'
             f'<span style="background:#2d3546;color:#bcc9ca;font-size:0.65rem;padding:5px 12px;border-radius:4px;cursor:pointer;">Details</span>'

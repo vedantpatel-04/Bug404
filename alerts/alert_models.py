@@ -34,6 +34,7 @@ class Alert:
     message: str = ""
     revenue_impact: float = 0.0
     suggested_action: str = ""
+    corrective_action: str = ""    # Detailed corrective action (CHANGE 5)
     priority_score: float = 0.0
     acknowledged: bool = False
     acknowledged_by: str = ""
@@ -52,6 +53,7 @@ class Alert:
             "message": self.message,
             "revenue_impact": self.revenue_impact,
             "suggested_action": self.suggested_action,
+            "corrective_action": self.corrective_action,
             "priority_score": self.priority_score,
             "acknowledged": self.acknowledged,
             "created_at": self.created_at,
@@ -70,6 +72,7 @@ class Alert:
             message=data.get("message", ""),
             revenue_impact=data.get("revenue_impact", 0),
             suggested_action=data.get("suggested_action", ""),
+            corrective_action=data.get("corrective_action", ""),
             priority_score=data.get("priority_score", 0),
             acknowledged=bool(data.get("acknowledged", 0)),
             acknowledged_by=data.get("acknowledged_by", ""),
@@ -101,3 +104,55 @@ SUGGESTED_ACTIONS = {
         "Check for expired promotion tags",
     ],
 }
+
+
+def generate_corrective_action(
+    alert_type: str,
+    sku_id: str = "",
+    sku_name: str = "",
+    aisle_id: str = "",
+    shelf_id: str = "",
+    detected_price: float = 0.0,
+    expected_price: float = 0.0,
+    current_position: str = "",
+    correct_position: str = "",
+    reorder_qty: int = 0,
+    hours_to_stockout: int = 0,
+) -> str:
+    """
+    Generate a detailed, actionable corrective action string based on alert type.
+    (CHANGE 5) — Provides specific instructions for store associates.
+    """
+    product = sku_name or sku_id or "Unknown product"
+    location = f"Aisle {aisle_id}, Shelf {shelf_id}" if aisle_id else "unknown location"
+    qty = reorder_qty if reorder_qty > 0 else 12  # sensible default
+
+    if alert_type == "STOCKOUT":
+        return (
+            f"Restock {product} at {location}. "
+            f"Suggested reorder qty: {qty} units. "
+            f"Contact supplier: auto-replenishment triggered."
+        )
+
+    elif alert_type == "PLANOGRAM_VIOLATION":
+        cur = current_position or location
+        cor = correct_position or "correct position per planogram layout"
+        return (
+            f"Move {product} from {cur} to {cor} per planogram layout."
+        )
+
+    elif alert_type == "LOW_STOCK":
+        hrs = hours_to_stockout if hours_to_stockout > 0 else 4
+        return (
+            f"Schedule replenishment for {product} within {hrs} hours to avoid stockout. "
+            f"Current location: {location}."
+        )
+
+    elif alert_type == "PRICE_MISMATCH":
+        det = f"${detected_price:.2f}" if detected_price > 0 else "detected price"
+        exp = f"${expected_price:.2f}" if expected_price > 0 else "planogram price"
+        return (
+            f"Update price tag at {location} from {det} to {exp}."
+        )
+
+    return f"Investigate alert for {product} at {location} and resolve."
