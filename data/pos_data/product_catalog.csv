@@ -1,0 +1,51 @@
+sku_id,product_name,category,unit_price,shelf_life_days,max_stock
+SKU001,Coca-Cola 500ml,Beverages,1.99,90,156
+SKU002,Pepsi 500ml,Beverages,1.89,90,53
+SKU003,Sprite 330ml,Beverages,1.49,365,80
+SKU004,Orange Juice 1L,Beverages,3.49,30,98
+SKU005,Mineral Water 1.5L,Beverages,1.29,90,78
+SKU006,Lay's Classic Chips,Snacks,3.49,365,144
+SKU007,Doritos Nacho,Snacks,3.99,180,199
+SKU008,Pringles Original,Snacks,4.29,30,61
+SKU009,Oreo Cookies,Snacks,2.99,180,133
+SKU010,KitKat Bar,Snacks,1.49,180,88
+SKU011,Whole Milk 1L,Dairy,2.49,90,66
+SKU012,Greek Yogurt 500g,Dairy,4.99,30,130
+SKU013,Cheddar Cheese 200g,Dairy,3.99,30,115
+SKU014,Butter 250g,Dairy,3.49,90,124
+SKU015,Cream Cheese 150g,Dairy,2.99,90,194
+SKU016,White Bread Loaf,Bakery,2.29,365,128
+SKU017,Whole Wheat Bread,Bakery,2.79,180,53
+SKU018,Croissants 4-pack,Bakery,3.99,365,110
+SKU019,Bagels 6-pack,Bakery,3.49,30,70
+SKU020,Muffins 4-pack,Bakery,4.49,90,143
+SKU021,Tuna Canned 185g,Canned Goods,2.49,365,136
+SKU022,Baked Beans 400g,Canned Goods,1.79,90,126
+SKU023,Tomato Soup 400g,Canned Goods,1.99,90,57
+SKU024,Corn Canned 340g,Canned Goods,1.69,90,160
+SKU025,Chickpeas 400g,Canned Goods,1.89,30,68
+SKU026,Frozen Pizza Margherita,Frozen Foods,5.99,365,106
+SKU027,Ice Cream Vanilla 1L,Frozen Foods,4.99,365,138
+SKU028,Frozen Veggies Mix,Frozen Foods,3.49,365,65
+SKU029,Fish Fingers 10-pack,Frozen Foods,4.99,30,88
+SKU030,Frozen Berries 500g,Frozen Foods,5.49,180,173
+SKU031,Shampoo 400ml,Personal Care,5.99,365,151
+SKU032,Toothpaste 100g,Personal Care,2.99,90,175
+SKU033,Hand Soap 250ml,Personal Care,2.49,90,144
+SKU034,Deodorant Spray,Personal Care,3.99,30,126
+SKU035,Tissue Box 100ct,Personal Care,2.99,365,193
+SKU036,Dish Soap 500ml,Household,2.99,180,177
+SKU037,Laundry Detergent 1L,Household,6.99,30,130
+SKU038,Trash Bags 30ct,Household,3.49,365,68
+SKU039,Paper Towels 2-roll,Household,4.99,180,78
+SKU040,Sponges 5-pack,Household,1.99,180,134
+SKU041,Ketchup 500ml,Condiments,2.49,365,97
+SKU042,Mustard 250ml,Condiments,1.99,30,64
+SKU043,Soy Sauce 250ml,Condiments,2.99,365,78
+SKU044,Hot Sauce 150ml,Condiments,3.49,90,60
+SKU045,Olive Oil 500ml,Condiments,6.99,30,53
+SKU046,Corn Flakes 500g,Cereals,3.99,30,72
+SKU047,Granola 400g,Cereals,4.49,180,67
+SKU048,Oatmeal 500g,Cereals,2.99,30,123
+SKU049,Rice Krispies 340g,Cereals,3.49,365,189
+SKU050,Muesli 500g,Cereals,4.99,180,130

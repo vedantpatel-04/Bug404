@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Store Health Dashboard | Retail Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#3d494a",
+                        "inverse-surface": "#dbe2f9",
+                        "secondary-container": "#757302",
+                        "background": "#0b1323",
+                        "primary-fixed-dim": "#5ed8e0",
+                        "on-surface": "#dbe2f9",
+                        "tertiary-fixed": "#e1e3e5",
+                        "on-tertiary-fixed": "#191c1e",
+                        "outline": "#869394",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#060e1e",
+                        "error": "#ffb4ab",
+                        "inverse-on-surface": "#293041",
+                        "secondary-fixed": "#ebe874",
+                        "tertiary": "#d3d5d7",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "surface-tint": "#5ed8e0",
+                        "surface-variant": "#2d3546",
+                        "on-secondary-fixed-variant": "#4a4900",
+                        "surface-container-high": "#222a3b",
+                        "on-primary-fixed": "#002022",
+                        "on-tertiary": "#2e3133",
+                        "on-secondary": "#333200",
+                        "on-primary": "#00373a",
+                        "primary": "#6ee6ee",
+                        "surface": "#0b1323",
+                        "surface-bright": "#31394b",
+                        "surface-dim": "#0b1323",
+                        "surface-container": "#182030",
+                        "surface-container-low": "#141b2c",
+                        "secondary": "#cecb5b",
+                        "on-primary-container": "#005256",
+                        "inverse-primary": "#00696e",
+                        "on-secondary-fixed": "#1d1d00",
+                        "on-secondary-container": "#fdf984",
+                        "on-surface-variant": "#bcc9ca",
+                        "on-primary-fixed-variant": "#004f53",
+                        "on-background": "#dbe2f9",
+                        "secondary-fixed-dim": "#cecb5b",
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "tertiary-container": "#b7b9bb",
+                        "on-tertiary-container": "#474a4b",
+                        "primary-container": "#4ecad2",
+                        "on-error": "#690005",
+                        "primary-fixed": "#7df4fc",
+                        "surface-container-highest": "#2d3546",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .heatmap-cell {
+            transition: opacity 0.3s ease;
+        }
+        .heatmap-cell:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body overflow-x-hidden">
+<!-- SideNavBar (Execution from JSON) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col bg-slate-950 h-screen w-64 border-r-0 font-inter tracking-tight text-sm z-50">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-gradient-to-br from-primary-container to-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-lg" style="font-variation-settings: 'FILL' 1;">shutter_speed</span>
+</div>
+<div>
+<div class="text-xl font-bold text-slate-100">Intelligence</div>
+<div class="text-[10px] uppercase tracking-[0.2em] text-slate-400">Shelf Aperture</div>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 mt-4">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 rounded text-cyan-400 font-semibold border-r-2 border-cyan-400 transition-colors hover:bg-slate-800" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-slate-400 hover:text-slate-200 transition-colors hover:bg-slate-800" href="#">
+<span class="material-symbols-outlined">videocam</span>
+<span>Live Monitor</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-slate-400 hover:text-slate-200 transition-colors hover:bg-slate-800" href="#">
+<span class="material-symbols-outlined">view_quilt</span>
+<span>Shelf Analysis</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-slate-400 hover:text-slate-200 transition-colors hover:bg-slate-800" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span>Forecast</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-slate-400 hover:text-slate-200 transition-colors hover:bg-slate-800" href="#">
+<span class="material-symbols-outlined">notifications_active</span>
+<span>Alerts</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-slate-400 hover:text-slate-200 transition-colors hover:bg-slate-800" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<div class="p-6 mt-auto">
+<div class="bg-slate-900 rounded-xl p-4 flex items-center gap-3 border border-outline-variant/10">
+<img alt="Store Manager" class="w-10 h-10 rounded-full object-cover" data-alt="professional corporate headshot of a mature retail store manager in a clean modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyfUiT2kAwi_xWdESXRIa_qBmJBR_FlAJt7CfX19BjF2xztNmUaDhtCuvXrQl3EFCa6D18Z2vnul3sIByqvMCC632h2ksnP_jsl2rOqBgKFXyXvo2RgDFcj0bhnE-0qZnjj4ztfmy9qGe6I2o0q4B4A7WDI4wzSHSwhc-drVTbw4QgOL11M3lVRFIruptt68jUNvLfMpp83O-x6jEy7ncmzBQOz7Ng1HSa6ege044unhP8DDsbsybvbOUfFqS9TLDWZUVC5aWQWXg"/>
+<div class="overflow-hidden">
+<p class="text-slate-100 font-semibold truncate">Marcus Chen</p>
+<p class="text-slate-400 text-xs truncate">North Region Lead</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopNavBar (Execution from JSON) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] flex justify-between items-center px-8 h-16 z-40 bg-slate-950/70 backdrop-blur-xl font-inter text-base">
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 group-focus-within:text-cyan-400 transition-colors">search</span>
+<input class="bg-slate-900 border-none rounded-lg pl-10 pr-4 py-2 text-sm w-80 focus:ring-1 focus:ring-cyan-400 placeholder:text-slate-500" placeholder="Search product or aisle..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 px-3 py-1 bg-slate-900 rounded-full border border-outline-variant/20">
+<span class="material-symbols-outlined text-cyan-400 text-sm">location_on</span>
+<span class="text-xs font-medium text-slate-300">New York - Flagship 04</span>
+</div>
+<button class="relative text-slate-300 hover:text-cyan-300 transition-all tap-highlight-none">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-slate-300 hover:text-cyan-300 transition-all tap-highlight-none">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 px-8 pb-12 min-h-screen">
+<!-- Header Section -->
+<div class="mb-10 flex justify-between items-end">
+<div>
+<p class="text-primary font-medium tracking-widest text-xs uppercase mb-2">Operations Intelligence</p>
+<h1 class="text-4xl font-black text-on-surface tracking-tight">Store Health Dashboard</h1>
+</div>
+<div class="flex gap-3">
+<button class="bg-surface-container-high px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 hover:bg-surface-bright transition-all">
+<span class="material-symbols-outlined text-sm">filter_list</span> Filter View
+                </button>
+<button class="bg-gradient-to-br from-primary-container to-primary text-on-primary px-6 py-2 rounded-lg text-sm font-bold shadow-lg shadow-primary/10 hover:brightness-110 transition-all">
+                    Download Report
+                </button>
+</div>
+</div>
+<!-- Hero Metrics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+<div class="bg-surface-container rounded-xl p-6 border-b-2 border-primary/20">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
+</div>
+<span class="text-xs text-primary bg-primary/10 px-2 py-1 rounded">+2.4% vs LW</span>
+</div>
+<h3 class="text-on-surface-variant text-sm font-medium mb-1">Shelf Health Score</h3>
+<div class="text-3xl font-black text-on-surface">94.2%</div>
+</div>
+<div class="bg-surface-container rounded-xl p-6 border-b-2 border-error/20">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-error/10 rounded-lg">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+<span class="text-xs text-error bg-error/10 px-2 py-1 rounded">High Alert</span>
+</div>
+<h3 class="text-on-surface-variant text-sm font-medium mb-1">Real-time Out-of-Stock</h3>
+<div class="text-3xl font-black text-on-surface">18 <span class="text-lg font-medium text-on-surface-variant">units</span></div>
+</div>
+<div class="bg-surface-container rounded-xl p-6 border-b-2 border-secondary/20">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-secondary/10 rounded-lg">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<span class="text-xs text-secondary bg-secondary/10 px-2 py-1 rounded">Estimated</span>
+</div>
+<h3 class="text-on-surface-variant text-sm font-medium mb-1">Revenue Recovered</h3>
+<div class="text-3xl font-black text-on-surface">$12,480</div>
+</div>
+<div class="bg-surface-container rounded-xl p-6 border-b-2 border-primary-fixed-dim/20">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-primary-fixed-dim/10 rounded-lg">
+<span class="material-symbols-outlined text-primary-fixed-dim" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span>
+</div>
+<span class="text-xs text-primary-fixed-dim bg-primary-fixed-dim/10 px-2 py-1 rounded">Model V4.2</span>
+</div>
+<h3 class="text-on-surface-variant text-sm font-medium mb-1">Forecast Accuracy</h3>
+<div class="text-3xl font-black text-on-surface">98.1%</div>
+</div>
+</div>
+<!-- Middle Section: Asymmetric Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+<!-- Store Floor Heatmap (Large Visual) -->
+<div class="lg:col-span-2 bg-surface-container-low rounded-xl overflow-hidden flex flex-col">
+<div class="p-6 flex justify-between items-center">
+<div>
+<h2 class="text-xl font-bold text-on-surface">Store Floor Heatmap</h2>
+<p class="text-on-surface-variant text-xs">High-frequency stockout zones</p>
+</div>
+<div class="flex items-center gap-4 text-xs">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-surface-container"></span> Low Risk
+                        </div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary/40"></span> Medium
+                        </div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary"></span> Critical
+                        </div>
+</div>
+</div>
+<div class="flex-1 p-8 bg-surface-container-lowest/50 relative overflow-hidden flex items-center justify-center">
+<!-- Faux Map Visualization using Grid -->
+<div class="grid grid-cols-12 gap-2 w-full max-w-4xl h-64 opacity-80">
+<!-- Aisles as Rectangles -->
+<div class="col-span-1 row-span-6 bg-surface-container rounded heatmap-cell"></div>
+<div class="col-span-1 row-span-6 bg-surface-container rounded heatmap-cell"></div>
+<div class="col-span-3 row-span-1 bg-surface-container rounded heatmap-cell"></div>
+<div class="col-span-3 row-span-1 bg-primary/60 rounded heatmap-cell animate-pulse"></div>
+<div class="col-span-3 row-span-1 bg-surface-container rounded heatmap-cell"></div>
+<div class="col-span-1 row-span-6 bg-surface-container rounded heatmap-cell"></div>
+<div class="col-span-9 row-span-1"></div> <!-- Spacer -->
+<div class="col-span-3 row-span-2 bg-primary rounded heatmap-cell shadow-[0_0_15px_rgba(110,230,238,0.4)]"></div>
+<div class="col-span-3 row-span-2 bg-surface-container rounded heatmap-cell"></div>
+<div class="col-span-3 row-span-2 bg-surface-container rounded heatmap-cell"></div>
+<div class="col-span-12 row-span-1"></div> <!-- Spacer -->
+<div class="col-span-2 row-span-2 bg-surface-container rounded heatmap-cell"></div>
+<div class="col-span-5 row-span-2 bg-primary/30 rounded heatmap-cell"></div>
+<div class="col-span-2 row-span-2 bg-surface-container rounded heatmap-cell"></div>
+</div>
+<!-- Overlay Data Labels -->
+<div class="absolute top-1/4 left-1/3 bg-surface-container-highest/90 backdrop-blur-md px-3 py-2 rounded-lg border border-primary/30 shadow-2xl">
+<p class="text-[10px] uppercase font-bold text-primary">Aisle 04: Dairy</p>
+<p class="text-xs font-semibold">8 Critical Stockouts</p>
+</div>
+</div>
+<div class="p-4 bg-surface-container flex justify-around text-xs text-on-surface-variant">
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-primary"></span> Highest Velocity: Beverages</div>
+<div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-secondary"></span> Delayed Restock: Fresh Produce</div>
+</div>
+</div>
+<!-- Recent Critical Alerts -->
+<div class="bg-surface-container rounded-xl flex flex-col h-full">
+<div class="p-6 border-b border-outline-variant/10">
+<h2 class="text-lg font-bold text-on-surface">Critical Alerts</h2>
+<p class="text-xs text-error font-medium">Top Impact Priority</p>
+</div>
+<div class="flex-1 p-4 space-y-4">
+<!-- Alert Item 1 -->
+<div class="p-4 bg-surface-container-high rounded-xl border-l-4 border-error">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-error bg-error/10 px-2 py-0.5 rounded uppercase">Loss Warning</span>
+<span class="text-[10px] text-on-surface-variant">2m ago</span>
+</div>
+<h4 class="font-bold text-on-surface leading-tight mb-1">Premium Greek Yogurt - 500g</h4>
+<p class="text-xs text-on-surface-variant mb-3">Shelf E4-2 • 0 units left</p>
+<div class="flex justify-between items-center bg-surface-container-lowest p-2 rounded">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-tighter font-semibold">Est. Daily Loss</span>
+<span class="text-sm font-black text-on-surface">$1,420</span>
+</div>
+</div>
+<!-- Alert Item 2 -->
+<div class="p-4 bg-surface-container-high rounded-xl border-l-4 border-secondary">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded uppercase">Compliance</span>
+<span class="text-[10px] text-on-surface-variant">14m ago</span>
+</div>
+<h4 class="font-bold text-on-surface leading-tight mb-1">Energy Drink Multi-pack (x6)</h4>
+<p class="text-xs text-on-surface-variant mb-3">Aisle 09 • Misplaced Item Alert</p>
+<div class="flex justify-between items-center bg-surface-container-lowest p-2 rounded">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-tighter font-semibold">Sales Risk</span>
+<span class="text-sm font-black text-on-surface">$890</span>
+</div>
+</div>
+<!-- Alert Item 3 -->
+<div class="p-4 bg-surface-container-high rounded-xl border-l-4 border-error">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-error bg-error/10 px-2 py-0.5 rounded uppercase">Out of Stock</span>
+<span class="text-[10px] text-on-surface-variant">28m ago</span>
+</div>
+<h4 class="font-bold text-on-surface leading-tight mb-1">Organic Cage-Free Eggs Large</h4>
+<p class="text-xs text-on-surface-variant mb-3">Shelf F1-1 • High Velocity</p>
+<div class="flex justify-between items-center bg-surface-container-lowest p-2 rounded">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-tighter font-semibold">Est. Daily Loss</span>
+<span class="text-sm font-black text-on-surface">$2,100</span>
+</div>
+</div>
+</div>
+<button class="w-full p-4 text-sm font-bold text-primary hover:bg-primary/5 transition-colors text-center border-t border-outline-variant/10">
+                    View All 12 Alerts
+                </button>
+</div>
+</div>
+<!-- Lower Section: Charts -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Out-of-Stock Trends Chart -->
+<div class="bg-surface-container rounded-xl p-6">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h2 class="text-lg font-bold text-on-surface">Out-of-Stock Trends</h2>
+<p class="text-on-surface-variant text-xs">Unit peaks over last 24h</p>
+</div>
+<select class="bg-surface-container-high border-none text-xs rounded-lg focus:ring-1 focus:ring-primary">
+<option>Last 24 Hours</option>
+<option>Last 7 Days</option>
+</select>
+</div>
+<div class="h-48 flex items-end gap-2 relative">
+<!-- Faux Line Chart Visualization -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 400 100">
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#6ee6ee" stop-opacity="0.5"></stop>
+<stop offset="100%" stop-color="#6ee6ee" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,80 Q40,75 80,40 T160,20 T240,60 T320,30 T400,10 L400,100 L0,100 Z" fill="url(#chartGradient)"></path>
+<path d="M0,80 Q40,75 80,40 T160,20 T240,60 T320,30 T400,10" fill="none" stroke="#6ee6ee" stroke-width="2"></path>
+</svg>
+<!-- Grid Lines Overlay -->
+<div class="absolute inset-0 grid grid-rows-4 pointer-events-none">
+<div class="border-t border-outline-variant/10"></div>
+<div class="border-t border-outline-variant/10"></div>
+<div class="border-t border-outline-variant/10"></div>
+<div class="border-t border-outline-variant/10"></div>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] text-on-surface-variant font-bold">
+<span>08:00</span>
+<span>12:00</span>
+<span>16:00</span>
+<span>20:00</span>
+<span>00:00</span>
+<span>04:00</span>
+<span>08:00</span>
+</div>
+</div>
+<!-- Planogram Compliance by Aisle -->
+<div class="bg-surface-container rounded-xl p-6">
+<div class="flex justify-between items-center mb-6">
+<div>
+<h2 class="text-lg font-bold text-on-surface">Planogram Compliance</h2>
+<p class="text-on-surface-variant text-xs">Percentage accuracy by aisle</p>
+</div>
+<div class="text-xs font-bold text-primary px-2 py-1 bg-primary/10 rounded">Avg: 92%</div>
+</div>
+<div class="space-y-4">
+<!-- Aisle Bar 1 -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-medium">Aisle 01: Produce</span>
+<span class="text-xs font-bold">98%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 98%"></div>
+</div>
+</div>
+<!-- Aisle Bar 2 -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-medium">Aisle 02: Bakery</span>
+<span class="text-xs font-bold">94%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 94%"></div>
+</div>
+</div>
+<!-- Aisle Bar 3 -->
+<div>
+<div class="flex justify-between items-center mb-1 text-error">
+<span class="text-xs font-medium">Aisle 03: Dairy</span>
+<span class="text-xs font-bold">78%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<!-- Aisle Bar 4 -->
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="text-xs font-medium">Aisle 04: Meat &amp; Seafood</span>
+<span class="text-xs font-bold">91%</span>
+</div>
+<div class="w-full h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 91%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Execution Mandate: Suppress on Details/Settings, Render on Home/Dashboard) -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="w-14 h-14 bg-gradient-to-br from-primary-container to-primary rounded-full flex items-center justify-center text-on-primary shadow-xl shadow-primary/20 hover:scale-110 transition-transform active:scale-95 group">
+<span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform" style="font-variation-settings: 'FILL' 1;">add</span>
+<!-- Tooltip -->
+<span class="absolute right-16 bg-surface-container-highest text-on-surface text-xs font-bold px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                Dispatch Restock Task
+            </span>
+</button>
+</div>
+</body></html>

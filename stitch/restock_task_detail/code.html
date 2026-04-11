@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-primary": "#00696e",
+                      "primary-fixed-dim": "#5ed8e0",
+                      "on-secondary-fixed": "#1d1d00",
+                      "surface-container-low": "#141b2c",
+                      "on-surface-variant": "#bcc9ca",
+                      "on-primary-fixed-variant": "#004f53",
+                      "primary-container": "#4ecad2",
+                      "secondary-container": "#757302",
+                      "outline-variant": "#3d494a",
+                      "on-tertiary-fixed": "#191c1e",
+                      "on-tertiary": "#2e3133",
+                      "outline": "#869394",
+                      "on-error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#c4c7c9",
+                      "tertiary": "#d3d5d7",
+                      "on-secondary": "#333200",
+                      "surface": "#0b1323",
+                      "surface-bright": "#31394b",
+                      "background": "#0b1323",
+                      "surface-container-highest": "#2d3546",
+                      "on-error": "#690005",
+                      "error-container": "#93000a",
+                      "primary-fixed": "#7df4fc",
+                      "on-tertiary-container": "#474a4b",
+                      "secondary-fixed-dim": "#cecb5b",
+                      "secondary-fixed": "#ebe874",
+                      "on-primary-fixed": "#002022",
+                      "error": "#ffb4ab",
+                      "tertiary-fixed": "#e1e3e5",
+                      "on-tertiary-fixed-variant": "#444749",
+                      "on-primary-container": "#005256",
+                      "surface-tint": "#5ed8e0",
+                      "surface-dim": "#0b1323",
+                      "surface-variant": "#2d3546",
+                      "secondary": "#cecb5b",
+                      "surface-container-high": "#222a3b",
+                      "surface-container": "#182030",
+                      "inverse-on-surface": "#293041",
+                      "on-secondary-fixed-variant": "#4a4900",
+                      "on-secondary-container": "#fdf984",
+                      "primary": "#6ee6ee",
+                      "on-background": "#dbe2f9",
+                      "inverse-surface": "#dbe2f9",
+                      "tertiary-container": "#b7b9bb",
+                      "surface-container-lowest": "#060e1e",
+                      "on-surface": "#dbe2f9",
+                      "on-primary": "#00373a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "headline": ["Inter"],
+                      "body": ["Inter"],
+                      "label": ["Inter"]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-[#141b2c] flex items-center justify-between px-6 py-4">
+<div class="flex items-center gap-4">
+<button class="text-[#4ecad2] active:scale-95 duration-150">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-['Inter'] font-bold text-lg tracking-tight text-[#4ecad2]">Task Detail</h1>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant/30">
+<img alt="associate profile" data-alt="Close up professional portrait of a retail store associate in a dark blue uniform, neutral lighting, cinematic tech style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAhoXUK6yUWU4WnD1T7MJat5CRddgTcFzlHibr_dTZy-uRgtr0uCgwIQzEXvN8WdGZkhBO0Q2x990N3XalRerIfrMrzsZXboLQ-5wDsGkp35Y7Yef8veTp1hHpu_egc9syHV-KvbT7l76BXSyC6Hstk0svtwHhIdTXhrJBAcF_9gimv2EErbiT-QQw_XiBWTcNLlGxgkJcpZgsxgmHgL2wVnrWM2xbyX-O6vi2rBGx-mkfwYior4j3yQBX1M2aZNggoxPId6u0SSQ"/>
+</div>
+</header>
+<main class="px-6 pt-6 space-y-6">
+<!-- Product Identity Section (Asymmetric Bento) -->
+<section class="grid grid-cols-3 gap-3">
+<div class="col-span-2 bg-surface-container-low p-5 rounded-xl flex flex-col justify-between min-h-[140px]">
+<div>
+<span class="bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-lg">High Priority</span>
+<h2 class="text-2xl font-black text-on-surface mt-2 leading-tight">Spark Energy 250ml</h2>
+<p class="text-outline text-sm font-medium mt-1">SKU: SE-992-04-B</p>
+</div>
+</div>
+<div class="col-span-1 bg-surface-container p-4 rounded-xl flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-secondary text-3xl mb-2" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="text-on-surface font-bold text-xl">12</span>
+<span class="text-outline text-[10px] uppercase font-bold tracking-tighter">Required</span>
+</div>
+</section>
+<!-- Location Context (Map) -->
+<section class="bg-surface-container-low rounded-xl overflow-hidden">
+<div class="px-5 py-4 flex justify-between items-center bg-surface-container-high/50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">map</span>
+<span class="font-bold text-sm tracking-wide text-on-surface">Aisle 4B - Zone 2</span>
+</div>
+<span class="text-[10px] font-bold text-outline uppercase tracking-widest">Shelf Level 3</span>
+</div>
+<div class="h-48 w-full relative">
+<img class="w-full h-full object-cover grayscale opacity-60 contrast-125" data-alt="High-tech floor plan map of a retail store with glowing blue paths and a pulsing cyan marker on Aisle 4B" data-location="Chicago" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-8FQ-AiqCqv2DbPGi93Am3pttmkdjiGW7_8xKlxk10GBWFQTm4nTATxwjQLZ9xXUzTNiWuZJsP7LEaGsDRHuHz757gXA4bs5QyrWGT5Ol7g8jzQTgNile2mJ3ny0wrQduVIRSIzNTaV3EWrQnMuphla7xOy90dXtMgTjFr8et5IRXnXrJrMmFh33ycF923DLl2dsQwidh7S_mn-wC-8217tXU_FCIynLfIXjruVCLrrL7T6g8uzZVT6ircSJtmvPFWzN8V01YEzk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent"></div>
+<div class="absolute bottom-4 left-4 flex gap-2">
+<div class="bg-surface-container-highest/80 backdrop-blur-md px-3 py-1.5 rounded-full flex items-center gap-2 border border-outline-variant/20">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-[11px] font-bold">Current Location</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Visual Intelligence (Camera Feed Fragment) -->
+<section class="space-y-3">
+<div class="flex items-center justify-between px-1">
+<h3 class="text-xs font-bold text-outline uppercase tracking-widest">Live Intelligence Feed</h3>
+<span class="text-[10px] text-primary font-medium">Detection: 0m 14s ago</span>
+</div>
+<div class="relative group">
+<div class="absolute inset-0 border-2 border-dashed border-primary/30 rounded-xl pointer-events-none z-10 m-2"></div>
+<div class="bg-surface-container rounded-xl overflow-hidden aspect-video relative">
+<img class="w-full h-full object-cover" data-alt="Clear high-angle photo of an empty grocery shelf space between energy drink cans, sharp focus on the price tag rail, clinical retail lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdU9bxESCceCMlBpd2NSJOlbs-_Shd3rjBHNqhcrvgiORgUU6_dFj32VT2Q6d835zZcNMv-cXxPNacRPXpGIrzmXSctKZM7jU_FZ4vVNC9rS1NRs-RFrhot_j0BLQHn0Dr41pYojP2MvXPjI5Jy5Yxr2GLmyq2mSd5ERODjk9nzBAIZ5BfBG4n5r7WJzkWoZLngRspAHzL8Kh75uvTwjVpkbHNlEjhKZdMwWdxGP_HFoXEtty0kMG2M6GmpaxvD-QknZu8YmuuNWs"/>
+<div class="absolute top-4 left-4 bg-error/10 backdrop-blur-md border border-error/20 px-3 py-1 rounded-lg">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-sm" style="font-variation-settings: 'FILL' 1;">error</span>
+<span class="text-error text-[10px] font-bold uppercase">Stockout Detected</span>
+</div>
+</div>
+<!-- Computer Vision Overlays -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-32 h-40 border-2 border-primary rounded-lg flex items-start justify-end p-2">
+<span class="text-[8px] bg-primary text-on-primary font-bold px-1 rounded">EMPTY_SLOT</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Actions -->
+<section class="pt-4">
+<button class="w-full bg-gradient-to-r from-primary-container to-primary text-on-primary py-5 rounded-xl font-black text-lg tracking-tight flex items-center justify-center gap-3 active:scale-[0.98] transition-transform shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">barcode_scanner</span>
+                Complete Restock
+            </button>
+<p class="text-center text-outline text-[11px] font-medium mt-4 px-8 leading-relaxed">
+                Scan the shelf tag after restocking to verify inventory levels and close this task.
+            </p>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-[#141b2c]/70 backdrop-blur-xl z-50 border-t border-[#3d494a]/20 shadow-[0_-4px_32px_-4px_rgba(6,14,30,0.12)]">
+<div class="flex flex-col items-center justify-center text-[#869394] px-3 py-1.5 hover:text-[#4ecad2]">
+<span class="material-symbols-outlined mb-1">notifications</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Alerts</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#4ecad2]/10 text-[#6ee6ee] rounded-xl px-3 py-1.5 active:scale-90 transition-transform">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">assignment</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Tasks</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#869394] px-3 py-1.5 hover:text-[#4ecad2]">
+<span class="material-symbols-outlined mb-1">barcode_scanner</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Inventory</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#869394] px-3 py-1.5 hover:text-[#4ecad2]">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase">Profile</span>
+</div>
+</nav>
+</body></html>

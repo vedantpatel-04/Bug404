@@ -1,0 +1,535 @@
+{
+  "store_id": "STORE02",
+  "store_name": "Mall Express Outlet",
+  "generated_at": "2026-04-01T00:00:00",
+  "aisles": [
+    {
+      "aisle_id": "A01",
+      "aisle_name": "Aisle 1",
+      "shelves": [
+        {
+          "shelf_id": "A01-S01",
+          "shelf_number": 1,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A01-S01-P01",
+              "sku_id": "SKU001",
+              "product_name": "Coca-Cola 500ml",
+              "expected_facings": 3,
+              "price": 1.99,
+              "min_stock": 7
+            },
+            {
+              "position": 2,
+              "section_id": "A01-S01-P02",
+              "sku_id": "SKU002",
+              "product_name": "Pepsi 500ml",
+              "expected_facings": 3,
+              "price": 1.89,
+              "min_stock": 3
+            },
+            {
+              "position": 3,
+              "section_id": "A01-S01-P03",
+              "sku_id": "SKU003",
+              "product_name": "Sprite 330ml",
+              "expected_facings": 3,
+              "price": 1.49,
+              "min_stock": 4
+            },
+            {
+              "position": 4,
+              "section_id": "A01-S01-P04",
+              "sku_id": "SKU004",
+              "product_name": "Orange Juice 1L",
+              "expected_facings": 5,
+              "price": 3.49,
+              "min_stock": 7
+            }
+          ]
+        },
+        {
+          "shelf_id": "A01-S02",
+          "shelf_number": 2,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A01-S02-P01",
+              "sku_id": "SKU005",
+              "product_name": "Mineral Water 1.5L",
+              "expected_facings": 5,
+              "price": 1.29,
+              "min_stock": 4
+            },
+            {
+              "position": 2,
+              "section_id": "A01-S02-P02",
+              "sku_id": "SKU006",
+              "product_name": "Lay's Classic Chips",
+              "expected_facings": 5,
+              "price": 3.49,
+              "min_stock": 4
+            },
+            {
+              "position": 3,
+              "section_id": "A01-S02-P03",
+              "sku_id": "SKU007",
+              "product_name": "Doritos Nacho",
+              "expected_facings": 3,
+              "price": 3.99,
+              "min_stock": 7
+            },
+            {
+              "position": 4,
+              "section_id": "A01-S02-P04",
+              "sku_id": "SKU008",
+              "product_name": "Pringles Original",
+              "expected_facings": 3,
+              "price": 4.29,
+              "min_stock": 4
+            }
+          ]
+        },
+        {
+          "shelf_id": "A01-S03",
+          "shelf_number": 3,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A01-S03-P01",
+              "sku_id": "SKU009",
+              "product_name": "Oreo Cookies",
+              "expected_facings": 4,
+              "price": 2.99,
+              "min_stock": 4
+            },
+            {
+              "position": 2,
+              "section_id": "A01-S03-P02",
+              "sku_id": "SKU010",
+              "product_name": "KitKat Bar",
+              "expected_facings": 5,
+              "price": 1.49,
+              "min_stock": 3
+            },
+            {
+              "position": 3,
+              "section_id": "A01-S03-P03",
+              "sku_id": "SKU011",
+              "product_name": "Whole Milk 1L",
+              "expected_facings": 3,
+              "price": 2.49,
+              "min_stock": 4
+            },
+            {
+              "position": 4,
+              "section_id": "A01-S03-P04",
+              "sku_id": "SKU012",
+              "product_name": "Greek Yogurt 500g",
+              "expected_facings": 4,
+              "price": 4.99,
+              "min_stock": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "aisle_id": "A02",
+      "aisle_name": "Aisle 2",
+      "shelves": [
+        {
+          "shelf_id": "A02-S01",
+          "shelf_number": 1,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A02-S01-P01",
+              "sku_id": "SKU013",
+              "product_name": "Cheddar Cheese 200g",
+              "expected_facings": 5,
+              "price": 3.99,
+              "min_stock": 3
+            },
+            {
+              "position": 2,
+              "section_id": "A02-S01-P02",
+              "sku_id": "SKU014",
+              "product_name": "Butter 250g",
+              "expected_facings": 4,
+              "price": 3.49,
+              "min_stock": 5
+            },
+            {
+              "position": 3,
+              "section_id": "A02-S01-P03",
+              "sku_id": "SKU015",
+              "product_name": "Cream Cheese 150g",
+              "expected_facings": 3,
+              "price": 2.99,
+              "min_stock": 4
+            },
+            {
+              "position": 4,
+              "section_id": "A02-S01-P04",
+              "sku_id": "SKU016",
+              "product_name": "White Bread Loaf",
+              "expected_facings": 3,
+              "price": 2.29,
+              "min_stock": 6
+            }
+          ]
+        },
+        {
+          "shelf_id": "A02-S02",
+          "shelf_number": 2,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A02-S02-P01",
+              "sku_id": "SKU017",
+              "product_name": "Whole Wheat Bread",
+              "expected_facings": 3,
+              "price": 2.79,
+              "min_stock": 4
+            },
+            {
+              "position": 2,
+              "section_id": "A02-S02-P02",
+              "sku_id": "SKU018",
+              "product_name": "Croissants 4-pack",
+              "expected_facings": 4,
+              "price": 3.99,
+              "min_stock": 6
+            },
+            {
+              "position": 3,
+              "section_id": "A02-S02-P03",
+              "sku_id": "SKU019",
+              "product_name": "Bagels 6-pack",
+              "expected_facings": 3,
+              "price": 3.49,
+              "min_stock": 4
+            },
+            {
+              "position": 4,
+              "section_id": "A02-S02-P04",
+              "sku_id": "SKU020",
+              "product_name": "Muffins 4-pack",
+              "expected_facings": 4,
+              "price": 4.49,
+              "min_stock": 5
+            }
+          ]
+        },
+        {
+          "shelf_id": "A02-S03",
+          "shelf_number": 3,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A02-S03-P01",
+              "sku_id": "SKU021",
+              "product_name": "Tuna Canned 185g",
+              "expected_facings": 4,
+              "price": 2.49,
+              "min_stock": 4
+            },
+            {
+              "position": 2,
+              "section_id": "A02-S03-P02",
+              "sku_id": "SKU022",
+              "product_name": "Baked Beans 400g",
+              "expected_facings": 4,
+              "price": 1.79,
+              "min_stock": 6
+            },
+            {
+              "position": 3,
+              "section_id": "A02-S03-P03",
+              "sku_id": "SKU023",
+              "product_name": "Tomato Soup 400g",
+              "expected_facings": 4,
+              "price": 1.99,
+              "min_stock": 3
+            },
+            {
+              "position": 4,
+              "section_id": "A02-S03-P04",
+              "sku_id": "SKU024",
+              "product_name": "Corn Canned 340g",
+              "expected_facings": 5,
+              "price": 1.69,
+              "min_stock": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "aisle_id": "A03",
+      "aisle_name": "Aisle 3",
+      "shelves": [
+        {
+          "shelf_id": "A03-S01",
+          "shelf_number": 1,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A03-S01-P01",
+              "sku_id": "SKU025",
+              "product_name": "Chickpeas 400g",
+              "expected_facings": 2,
+              "price": 1.89,
+              "min_stock": 3
+            },
+            {
+              "position": 2,
+              "section_id": "A03-S01-P02",
+              "sku_id": "SKU026",
+              "product_name": "Frozen Pizza Margherita",
+              "expected_facings": 5,
+              "price": 5.99,
+              "min_stock": 5
+            },
+            {
+              "position": 3,
+              "section_id": "A03-S01-P03",
+              "sku_id": "SKU027",
+              "product_name": "Ice Cream Vanilla 1L",
+              "expected_facings": 3,
+              "price": 4.99,
+              "min_stock": 6
+            },
+            {
+              "position": 4,
+              "section_id": "A03-S01-P04",
+              "sku_id": "SKU028",
+              "product_name": "Frozen Veggies Mix",
+              "expected_facings": 2,
+              "price": 3.49,
+              "min_stock": 5
+            }
+          ]
+        },
+        {
+          "shelf_id": "A03-S02",
+          "shelf_number": 2,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A03-S02-P01",
+              "sku_id": "SKU029",
+              "product_name": "Fish Fingers 10-pack",
+              "expected_facings": 3,
+              "price": 4.99,
+              "min_stock": 7
+            },
+            {
+              "position": 2,
+              "section_id": "A03-S02-P02",
+              "sku_id": "SKU030",
+              "product_name": "Frozen Berries 500g",
+              "expected_facings": 4,
+              "price": 5.49,
+              "min_stock": 4
+            },
+            {
+              "position": 3,
+              "section_id": "A03-S02-P03",
+              "sku_id": "SKU031",
+              "product_name": "Shampoo 400ml",
+              "expected_facings": 3,
+              "price": 5.99,
+              "min_stock": 3
+            },
+            {
+              "position": 4,
+              "section_id": "A03-S02-P04",
+              "sku_id": "SKU032",
+              "product_name": "Toothpaste 100g",
+              "expected_facings": 4,
+              "price": 2.99,
+              "min_stock": 7
+            }
+          ]
+        },
+        {
+          "shelf_id": "A03-S03",
+          "shelf_number": 3,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A03-S03-P01",
+              "sku_id": "SKU033",
+              "product_name": "Hand Soap 250ml",
+              "expected_facings": 3,
+              "price": 2.49,
+              "min_stock": 6
+            },
+            {
+              "position": 2,
+              "section_id": "A03-S03-P02",
+              "sku_id": "SKU034",
+              "product_name": "Deodorant Spray",
+              "expected_facings": 4,
+              "price": 3.99,
+              "min_stock": 5
+            },
+            {
+              "position": 3,
+              "section_id": "A03-S03-P03",
+              "sku_id": "SKU035",
+              "product_name": "Tissue Box 100ct",
+              "expected_facings": 3,
+              "price": 2.99,
+              "min_stock": 4
+            },
+            {
+              "position": 4,
+              "section_id": "A03-S03-P04",
+              "sku_id": "SKU036",
+              "product_name": "Dish Soap 500ml",
+              "expected_facings": 4,
+              "price": 2.99,
+              "min_stock": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "aisle_id": "A04",
+      "aisle_name": "Aisle 4",
+      "shelves": [
+        {
+          "shelf_id": "A04-S01",
+          "shelf_number": 1,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A04-S01-P01",
+              "sku_id": "SKU037",
+              "product_name": "Laundry Detergent 1L",
+              "expected_facings": 5,
+              "price": 6.99,
+              "min_stock": 7
+            },
+            {
+              "position": 2,
+              "section_id": "A04-S01-P02",
+              "sku_id": "SKU038",
+              "product_name": "Trash Bags 30ct",
+              "expected_facings": 4,
+              "price": 3.49,
+              "min_stock": 6
+            },
+            {
+              "position": 3,
+              "section_id": "A04-S01-P03",
+              "sku_id": "SKU039",
+              "product_name": "Paper Towels 2-roll",
+              "expected_facings": 3,
+              "price": 4.99,
+              "min_stock": 3
+            },
+            {
+              "position": 4,
+              "section_id": "A04-S01-P04",
+              "sku_id": "SKU040",
+              "product_name": "Sponges 5-pack",
+              "expected_facings": 4,
+              "price": 1.99,
+              "min_stock": 6
+            }
+          ]
+        },
+        {
+          "shelf_id": "A04-S02",
+          "shelf_number": 2,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A04-S02-P01",
+              "sku_id": "SKU041",
+              "product_name": "Ketchup 500ml",
+              "expected_facings": 3,
+              "price": 2.49,
+              "min_stock": 5
+            },
+            {
+              "position": 2,
+              "section_id": "A04-S02-P02",
+              "sku_id": "SKU042",
+              "product_name": "Mustard 250ml",
+              "expected_facings": 2,
+              "price": 1.99,
+              "min_stock": 4
+            },
+            {
+              "position": 3,
+              "section_id": "A04-S02-P03",
+              "sku_id": "SKU043",
+              "product_name": "Soy Sauce 250ml",
+              "expected_facings": 4,
+              "price": 2.99,
+              "min_stock": 3
+            },
+            {
+              "position": 4,
+              "section_id": "A04-S02-P04",
+              "sku_id": "SKU044",
+              "product_name": "Hot Sauce 150ml",
+              "expected_facings": 5,
+              "price": 3.49,
+              "min_stock": 3
+            }
+          ]
+        },
+        {
+          "shelf_id": "A04-S03",
+          "shelf_number": 3,
+          "sections": [
+            {
+              "position": 1,
+              "section_id": "A04-S03-P01",
+              "sku_id": "SKU045",
+              "product_name": "Olive Oil 500ml",
+              "expected_facings": 4,
+              "price": 6.99,
+              "min_stock": 6
+            },
+            {
+              "position": 2,
+              "section_id": "A04-S03-P02",
+              "sku_id": "SKU046",
+              "product_name": "Corn Flakes 500g",
+              "expected_facings": 2,
+              "price": 3.99,
+              "min_stock": 3
+            },
+            {
+              "position": 3,
+              "section_id": "A04-S03-P03",
+              "sku_id": "SKU047",
+              "product_name": "Granola 400g",
+              "expected_facings": 4,
+              "price": 4.49,
+              "min_stock": 4
+            },
+            {
+              "position": 4,
+              "section_id": "A04-S03-P04",
+              "sku_id": "SKU048",
+              "product_name": "Oatmeal 500g",
+              "expected_facings": 3,
+              "price": 2.99,
+              "min_stock": 7
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Security Verification | Smart Retail Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#869394",
+                    "surface-variant": "#2d3546",
+                    "surface-container-high": "#222a3b",
+                    "on-primary-fixed": "#002022",
+                    "on-tertiary": "#2e3133",
+                    "surface-dim": "#0b1323",
+                    "primary": "#6ee6ee",
+                    "on-tertiary-container": "#474a4b",
+                    "on-surface": "#dbe2f9",
+                    "surface-container-low": "#141b2c",
+                    "primary-container": "#4ecad2",
+                    "inverse-surface": "#dbe2f9",
+                    "tertiary-container": "#b7b9bb",
+                    "on-tertiary-fixed": "#191c1e",
+                    "secondary-container": "#757302",
+                    "tertiary": "#d3d5d7",
+                    "primary-fixed-dim": "#5ed8e0",
+                    "outline-variant": "#3d494a",
+                    "secondary": "#cecb5b",
+                    "on-primary-container": "#005256",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-lowest": "#060e1e",
+                    "on-secondary-fixed-variant": "#4a4900",
+                    "tertiary-fixed-dim": "#c4c7c9",
+                    "surface-tint": "#5ed8e0",
+                    "on-secondary-container": "#fdf984",
+                    "surface-container": "#182030",
+                    "on-primary-fixed-variant": "#004f53",
+                    "surface-bright": "#31394b",
+                    "secondary-fixed": "#ebe874",
+                    "primary-fixed": "#7df4fc",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "on-secondary-fixed": "#1d1d00",
+                    "on-secondary": "#333200",
+                    "on-background": "#dbe2f9",
+                    "error-container": "#93000a",
+                    "surface": "#0b1323",
+                    "secondary-fixed-dim": "#cecb5b",
+                    "on-primary": "#00373a",
+                    "on-error": "#690005",
+                    "background": "#0b1323",
+                    "inverse-primary": "#00696e",
+                    "error": "#ffb4ab",
+                    "tertiary-fixed": "#e1e3e5",
+                    "surface-container-highest": "#2d3546",
+                    "on-surface-variant": "#bcc9ca",
+                    "inverse-on-surface": "#293041"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(24, 32, 48, 0.7);
+            backdrop-filter: blur(20px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .digit-input:focus {
+            box-shadow: 0 4px 0 0 #6ee6ee;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col">
+<!-- Top Navigation Anchor -->
+<header class="fixed top-0 w-full z-50 bg-[#141b2c] transition-all duration-300 shadow-none">
+<div class="flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#4ECAD2]" data-icon="shield">shield</span>
+<h1 class="text-lg font-bold tracking-tighter text-[#dbe2f9] uppercase font-headline">Smart Retail Intelligence</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#869394] hover:text-[#6ee6ee] transition-all p-2 rounded-full" data-icon="help_outline">help_outline</button>
+</div>
+</div>
+</header>
+<!-- Main Content: The Intelligent Aperture -->
+<main class="flex-grow flex items-center justify-center p-6 mt-16 relative overflow-hidden">
+<!-- Background Ambient Glows -->
+<div class="absolute top-1/4 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="absolute bottom-1/4 -right-20 w-80 h-80 bg-secondary/10 rounded-full blur-[100px] pointer-events-none"></div>
+<!-- 2FA Center Card -->
+<section class="max-w-md w-full relative z-10">
+<div class="surface-container-low rounded-xl p-8 md:p-10 shadow-2xl border border-outline-variant/10">
+<!-- Security Icon Aperture -->
+<div class="flex justify-center mb-8">
+<div class="w-20 h-20 rounded-full bg-surface-container-highest flex items-center justify-center relative">
+<div class="absolute inset-0 rounded-full border border-primary/20 animate-pulse"></div>
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="lock_person">lock_person</span>
+</div>
+</div>
+<!-- Header Content -->
+<div class="text-center space-y-3 mb-10">
+<h2 class="text-2xl font-extrabold tracking-tight text-on-surface">Two-Factor Authentication</h2>
+<p class="text-on-surface-variant text-sm leading-relaxed">
+                        Enter the 6-digit code sent to your registered device to verify your identity.
+                    </p>
+</div>
+<!-- 6-Digit Code Input Cluster -->
+<form class="space-y-10">
+<div class="flex justify-between gap-2 md:gap-3">
+<input autofocus="" class="digit-input w-12 h-16 md:w-14 md:h-20 text-center text-2xl font-bold bg-surface-container-highest border-none rounded-lg text-primary focus:ring-0 focus:bg-surface-bright transition-all" maxlength="1" type="text" value="4"/>
+<input class="digit-input w-12 h-16 md:w-14 md:h-20 text-center text-2xl font-bold bg-surface-container-highest border-none rounded-lg text-primary focus:ring-0 focus:bg-surface-bright transition-all" maxlength="1" placeholder="·" type="text"/>
+<input class="digit-input w-12 h-16 md:w-14 md:h-20 text-center text-2xl font-bold bg-surface-container-highest border-none rounded-lg text-primary focus:ring-0 focus:bg-surface-bright transition-all" maxlength="1" placeholder="·" type="text"/>
+<input class="digit-input w-12 h-16 md:w-14 md:h-20 text-center text-2xl font-bold bg-surface-container-highest border-none rounded-lg text-primary focus:ring-0 focus:bg-surface-bright transition-all" maxlength="1" placeholder="·" type="text"/>
+<input class="digit-input w-12 h-16 md:w-14 md:h-20 text-center text-2xl font-bold bg-surface-container-highest border-none rounded-lg text-primary focus:ring-0 focus:bg-surface-bright transition-all" maxlength="1" placeholder="·" type="text"/>
+<input class="digit-input w-12 h-16 md:w-14 md:h-20 text-center text-2xl font-bold bg-surface-container-highest border-none rounded-lg text-primary focus:ring-0 focus:bg-surface-bright transition-all" maxlength="1" placeholder="·" type="text"/>
+</div>
+<!-- Actions & Timer -->
+<div class="space-y-6">
+<div class="flex flex-col items-center gap-2">
+<div class="flex items-center gap-2 text-label-md text-on-surface-variant">
+<span class="material-symbols-outlined text-xs" data-icon="schedule">schedule</span>
+<span>Code expires in <span class="text-secondary font-mono font-bold">02:44</span></span>
+</div>
+<button class="text-sm font-medium text-outline cursor-not-allowed transition-colors py-1 px-4 rounded-full border border-outline/20" disabled="" type="button">
+                                Resend Code
+                            </button>
+</div>
+<button class="w-full h-14 bg-gradient-to-br from-primary-container to-primary text-on-primary-container font-bold text-lg rounded-xl shadow-lg shadow-primary/10 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2" type="submit">
+<span>Verify &amp; Continue</span>
+<span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</form>
+<!-- Help Link -->
+<div class="mt-8 text-center">
+<a class="text-xs text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center gap-1 group" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="smartphone">smartphone</span>
+                        I didn't get a code or lost access
+                    </a>
+</div>
+</div>
+<!-- Contextual Branding Image -->
+<div class="mt-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
+<div class="w-full h-24 rounded-xl overflow-hidden relative group">
+<img alt="Cybersecurity data visualization" class="w-full h-full object-cover" data-alt="abstract close up of digital circuit board with glowing blue lines and futuristic data elements in a dark environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUUrkRIZfcd_sdd7crOzqTY80O7TaMtW-KeuOCtr7vWmZ2dLAVq0IfgBKfEjN9I686JMOn30rK7M7kFKewjTNk2oCG3uDSaWQTACmIgbjjwq4HoUv23usvtXg4zlRVMihmngd_qyD1UAr1Uh3TH2Zqf8vnbblrQtEIt-GrWI-NLIYbZ88be-J1ensQQGzwi2qdY_JRY5Doar8fhTNG91L2OPjA0zdePQp5h6T-KoDA7ni8234rHpT6OTiJ_oh2NcgNuehSE_l3AAI"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Security Badge -->
+<footer class="p-6 text-center">
+<div class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container rounded-full text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-semibold border border-outline-variant/5">
+<span class="material-symbols-outlined text-xs text-primary" data-icon="verified_user">verified_user</span>
+            End-to-End Encrypted Intelligence
+        </div>
+</footer>
+</body></html>

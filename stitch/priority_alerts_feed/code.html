@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Store Intelligence | Alert Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#00696e",
+                    "primary-fixed-dim": "#5ed8e0",
+                    "on-secondary-fixed": "#1d1d00",
+                    "surface-container-low": "#141b2c",
+                    "on-surface-variant": "#bcc9ca",
+                    "on-primary-fixed-variant": "#004f53",
+                    "primary-container": "#4ecad2",
+                    "secondary-container": "#757302",
+                    "outline-variant": "#3d494a",
+                    "on-tertiary-fixed": "#191c1e",
+                    "on-tertiary": "#2e3133",
+                    "outline": "#869394",
+                    "on-error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#c4c7c9",
+                    "tertiary": "#d3d5d7",
+                    "on-secondary": "#333200",
+                    "surface": "#0b1323",
+                    "surface-bright": "#31394b",
+                    "background": "#0b1323",
+                    "surface-container-highest": "#2d3546",
+                    "on-error": "#690005",
+                    "error-container": "#93000a",
+                    "primary-fixed": "#7df4fc",
+                    "on-tertiary-container": "#474a4b",
+                    "secondary-fixed-dim": "#cecb5b",
+                    "secondary-fixed": "#ebe874",
+                    "on-primary-fixed": "#002022",
+                    "error": "#ffb4ab",
+                    "tertiary-fixed": "#e1e3e5",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "on-primary-container": "#005256",
+                    "surface-tint": "#5ed8e0",
+                    "surface-dim": "#0b1323",
+                    "surface-variant": "#2d3546",
+                    "secondary": "#cecb5b",
+                    "surface-container-high": "#222a3b",
+                    "surface-container": "#182030",
+                    "inverse-on-surface": "#293041",
+                    "on-secondary-fixed-variant": "#4a4900",
+                    "on-secondary-container": "#fdf984",
+                    "primary": "#6ee6ee",
+                    "on-background": "#dbe2f9",
+                    "inverse-surface": "#dbe2f9",
+                    "tertiary-container": "#b7b9bb",
+                    "surface-container-lowest": "#060e1e",
+                    "on-surface": "#dbe2f9",
+                    "on-primary": "#00373a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b1323; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(24, 32, 48, 0.7);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-[#0b1323] z-50">
+<div class="flex items-center justify-between px-6 py-4 w-full bg-[#141b2c]">
+<div class="flex items-center gap-4">
+<button class="hover:bg-[#182030] transition-colors active:scale-95 duration-150 p-2 rounded-lg">
+<span class="material-symbols-outlined text-[#4ecad2]">menu</span>
+</button>
+<h1 class="font-['Inter'] font-bold text-lg tracking-tight text-[#4ecad2]">Store Intelligence</h1>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-[#4ecad2]/30 overflow-hidden">
+<img alt="Associate Profile" class="w-full h-full object-cover" data-alt="Professional portrait of a male retail store associate in a dark navy uniform against a clean studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUdUkCSbOnk6T7zgGDya1VLg-t3WQl9KTIEt4oFUvFsQZ0Zqsdfg4GEOCRYDVqGX19CY153oJMrhiUCzjCNoFIdXF9ap8q213FxEXrxfmA4H-Yhb4M1sMlw6D-UzGCbQodhX8pxrfGOjf5pe7TsXTv3C3w0r8YUaroSzqsPcrbvGEZAIfL9C4kF4qNscchvMA6_MGWXOkVw91ne8p305zTxAZxuFIV8vvDMcGAosA7umNF0YLpB2d9JpeBkj0nBJIggodk_nVHNvQ"/>
+</div>
+</div>
+</header>
+<main class="px-4 py-6">
+<!-- Dashboard Summary Bento Area -->
+<section class="grid grid-cols-2 gap-4 mb-8">
+<div class="col-span-2 bg-surface-container-low p-5 rounded-xl flex flex-col gap-1 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+<span class="text-on-surface-variant text-xs font-semibold tracking-widest uppercase">Revenue at Risk</span>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-black text-on-surface tracking-tighter">$12,840</span>
+<span class="text-error text-xs font-bold flex items-center">
+<span class="material-symbols-outlined text-sm">trending_up</span> 12%
+                    </span>
+</div>
+<div class="mt-4 flex gap-2">
+<span class="px-2 py-1 bg-error/10 text-error text-[10px] font-bold rounded uppercase">8 Urgent Alerts</span>
+<span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase">Shift: Morning</span>
+</div>
+</div>
+</section>
+<!-- Alert Feed Header -->
+<div class="flex items-center justify-between mb-6 px-2">
+<h2 class="text-xl font-extrabold tracking-tight text-on-surface">Active Alerts</h2>
+<button class="flex items-center gap-1 text-primary text-sm font-medium">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+<span>Priority</span>
+</button>
+</div>
+<!-- Alert List -->
+<div class="space-y-4">
+<!-- Alert Card 1: Out of Stock -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-error"></div>
+<div class="p-4 flex gap-4">
+<div class="w-20 h-20 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+<img alt="Product" class="w-full h-full object-cover" data-alt="Close up of a premium organic almond milk carton with clean minimalist packaging on a dark studio surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPFRVJJwDt9XXGkwp-bGeNo1u8CgY0ZRWOqBuG9zR37WyrkL0uNmJ3WnzX6wkmBJIagyssfY-BDpMCMYd4FSSGUQotHYLnoUFTYjzWY8hEHc-ylyoH-fHgAFPPYGQBhIbGAgbPzLf1294uCKn-s4VGsbBQ-mWorXGd_ZqcgFrm6ZBWnjGdeUxflWny7n5OIMLnq8UjhPJwytTCpylal18fZWdosQzscdHtU_HRyae63N3pz4N1KV_3TNdx-kBr1c5pXCqcZpjAUZ4"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<span class="bg-error/10 text-error text-[10px] font-bold px-2 py-0.5 rounded uppercase">Out of Stock</span>
+<span class="text-on-surface-variant text-[10px] font-medium">Aisle 12 • Bay 4</span>
+</div>
+<h3 class="text-on-surface font-bold text-base truncate">PureHarvest Almond Milk</h3>
+<p class="text-on-surface-variant text-xs mb-3">Impact: <span class="text-on-surface font-bold">$1,420/day</span></p>
+<div class="flex items-center justify-between gap-3">
+<button class="flex-1 py-2.5 bg-gradient-to-br from-primary-container to-primary text-on-primary font-bold text-xs rounded-lg active:scale-95 transition-transform">
+                                Accept Task
+                            </button>
+<button class="p-2.5 bg-surface-container text-on-surface-variant rounded-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Alert Card 2: Planogram Violation -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-secondary"></div>
+<div class="p-4 flex gap-4">
+<div class="w-20 h-20 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+<img alt="Product" class="w-full h-full object-cover" data-alt="Modern glass milk bottle with white liquid inside against a moody dark blue background with dramatic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWT5TZrlJ6hD7afg9zvcXvwWNRGO9GCkWp-bABZErfkEZRHPDm6jKpnma44G2kW_-I97H1O1E7vCS3whw5S_57J1px8PKRY_cu5P-rFt7YAfekMblI7gUSRmjLCAv7LsGU6mD95lPdJTMLq-FZIoP_alar0xSvqtBpogHmyQPt15RsI1_Mkq81zlkSlyCRJEZTkFkwOqYUfjDsuRsVtftpdUZZ9xc214l_ILRW_OI0LrZJ_HD0e_Hpx1HByWNrZBSJabg1_08lBWg"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<span class="bg-secondary/10 text-secondary text-[10px] font-bold px-2 py-0.5 rounded uppercase">Planogram Violation</span>
+<span class="text-on-surface-variant text-[10px] font-medium">Aisle 04 • Bay 1</span>
+</div>
+<h3 class="text-on-surface font-bold text-base truncate">Luxe Creamery Whole Milk</h3>
+<p class="text-on-surface-variant text-xs mb-3">Impact: <span class="text-on-surface font-bold">$840/day</span></p>
+<div class="flex items-center justify-between gap-3">
+<button class="flex-1 py-2.5 bg-gradient-to-br from-primary-container to-primary text-on-primary font-bold text-xs rounded-lg active:scale-95 transition-transform">
+                                Accept Task
+                            </button>
+<button class="p-2.5 bg-surface-container text-on-surface-variant rounded-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Alert Card 3: Low Stock Warning -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden relative">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="p-4 flex gap-4">
+<div class="w-20 h-20 rounded-lg bg-surface-container overflow-hidden flex-shrink-0">
+<img alt="Product" class="w-full h-full object-cover" data-alt="Colorful gourmet fruit snacks in a minimalist pouch package positioned on a dark stone surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANcohhvr_rsonuP090QXxS8TASI_zACICa6T9e_ZQu0BOgb9K-CCA4k-AtaUuS5Cxfrbdkt4NTWZ6aVZAvUAv_mhMnnbSowQgHmLEILmmFbvPOgOW8HCULb6tUoMWGJEbv_oMBHkvuOIvUb82n_rsQPqXAnOLOYtA4hZNp1-HeiRQ-70RCDqnXGXOAlRao1Z3NPDg9PmnCH3qaFeoh02q6HXksQTWlDfGdG5x1A1_l7asU0xlfJHoP9dBNZtOCq4bzY2E6Nfay47E"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase">Low Stock (2 Left)</span>
+<span class="text-on-surface-variant text-[10px] font-medium">Aisle 08 • Bay 12</span>
+</div>
+<h3 class="text-on-surface font-bold text-base truncate">EcoBite Fruit Medley</h3>
+<p class="text-on-surface-variant text-xs mb-3">Impact: <span class="text-on-surface font-bold">$420/day</span></p>
+<div class="flex items-center justify-between gap-3">
+<button class="flex-1 py-2.5 bg-gradient-to-br from-primary-container to-primary text-on-primary font-bold text-xs rounded-lg active:scale-95 transition-transform">
+                                Accept Task
+                            </button>
+<button class="p-2.5 bg-surface-container text-on-surface-variant rounded-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Alert Card 4: Price Mismatch -->
+<div class="bg-surface-container-low rounded-xl overflow-hidden relative opacity-70">
+<div class="absolute top-0 left-0 w-1 h-full bg-outline"></div>
+<div class="p-4 flex gap-4">
+<div class="w-20 h-20 rounded-lg bg-surface-container overflow-hidden flex-shrink-0 grayscale">
+<img alt="Product" class="w-full h-full object-cover" data-alt="Organic green grapes in a clear container with soft studio lighting and dark shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3SGUJIe1c3tpzGjL0MviA7Det0I_hmKHM7CCDl1t7VJ9bFXrXP2QtjSq7HC1If2EPdCleNnjyEFd8zv43-tefDu8m4BjU6WMf-924Wj61YO5s_Dwov_GfSHC9QnGL_DopuooO1FsAerS5ZNxJjTWXR07RwEba1y3SVRHgKJEgPOl-uxajP6BBOFOTcI12iuahDJDIqTorlR6Z0oGzlZAOefZOFGwJ2j2cqpV1w3fzf_4I76FIqikRXPsg9IaO3h2mesvTAdjhvMI"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-1">
+<span class="bg-surface-container-highest text-on-surface-variant text-[10px] font-bold px-2 py-0.5 rounded uppercase">Price Discrepancy</span>
+<span class="text-on-surface-variant text-[10px] font-medium">Aisle 01 • Bay 2</span>
+</div>
+<h3 class="text-on-surface font-bold text-base truncate">Green Vine Grapes (lb)</h3>
+<p class="text-on-surface-variant text-xs mb-3">Impact: <span class="text-on-surface font-bold">$120/day</span></p>
+<div class="flex items-center justify-between gap-3">
+<button class="flex-1 py-2.5 bg-surface-container-highest text-on-surface-variant font-bold text-xs rounded-lg active:scale-95 transition-transform">
+                                Assigned to: Sarah M.
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-[#141b2c]/70 backdrop-blur-xl z-50 border-t border-[#3d494a]/20 shadow-[0_-4px_32px_-4px_rgba(6,14,30,0.12)]">
+<!-- Alerts (Active) -->
+<a class="flex flex-col items-center justify-center bg-[#4ecad2]/10 text-[#6ee6ee] rounded-xl px-3 py-1.5 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Alerts</span>
+</a>
+<!-- Tasks -->
+<a class="flex flex-col items-center justify-center text-[#869394] px-3 py-1.5 hover:text-[#4ecad2] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Tasks</span>
+</a>
+<!-- Inventory -->
+<a class="flex flex-col items-center justify-center text-[#869394] px-3 py-1.5 hover:text-[#4ecad2] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">barcode_scanner</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Inventory</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-[#869394] px-3 py-1.5 hover:text-[#4ecad2] active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-wide uppercase mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

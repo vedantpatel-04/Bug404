@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Shelf Detail &amp; SKU Analysis | Retail Intelligence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#3d494a",
+                        "inverse-surface": "#dbe2f9",
+                        "secondary-container": "#757302",
+                        "background": "#0b1323",
+                        "primary-fixed-dim": "#5ed8e0",
+                        "on-surface": "#dbe2f9",
+                        "tertiary-fixed": "#e1e3e5",
+                        "on-tertiary-fixed": "#191c1e",
+                        "outline": "#869394",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#060e1e",
+                        "error": "#ffb4ab",
+                        "inverse-on-surface": "#293041",
+                        "secondary-fixed": "#ebe874",
+                        "tertiary": "#d3d5d7",
+                        "on-tertiary-fixed-variant": "#444749",
+                        "surface-tint": "#5ed8e0",
+                        "surface-variant": "#2d3546",
+                        "on-secondary-fixed-variant": "#4a4900",
+                        "surface-container-high": "#222a3b",
+                        "on-primary-fixed": "#002022",
+                        "on-tertiary": "#2e3133",
+                        "on-secondary": "#333200",
+                        "on-primary": "#00373a",
+                        "primary": "#6ee6ee",
+                        "surface": "#0b1323",
+                        "surface-bright": "#31394b",
+                        "surface-dim": "#0b1323",
+                        "surface-container": "#182030",
+                        "surface-container-low": "#141b2c",
+                        "secondary": "#cecb5b",
+                        "on-primary-container": "#005256",
+                        "inverse-primary": "#00696e",
+                        "on-secondary-fixed": "#1d1d00",
+                        "on-secondary-container": "#fdf984",
+                        "on-surface-variant": "#bcc9ca",
+                        "on-primary-fixed-variant": "#004f53",
+                        "on-background": "#dbe2f9",
+                        "secondary-fixed-dim": "#cecb5b",
+                        "tertiary-fixed-dim": "#c4c7c9",
+                        "tertiary-container": "#b7b9bb",
+                        "on-tertiary-container": "#474a4b",
+                        "primary-container": "#4ecad2",
+                        "on-error": "#690005",
+                        "primary-fixed": "#7df4fc",
+                        "surface-container-highest": "#2d3546",
+                        "on-error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0b1323;
+            color: #dbe2f9;
+            font-family: 'Inter', sans-serif;
+        }
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(24, 32, 48, 0.7);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="flex overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col bg-slate-950 h-screen w-64 border-r-0 z-50">
+<div class="p-6 flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-container to-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-xl">view_in_ar</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-slate-100 leading-none">Intelligence</h1>
+<p class="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Shelf Aperture</p>
+</div>
+</div>
+<nav class="flex-1 mt-4 px-3 space-y-1 font-inter tracking-tight text-sm">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-cyan-400 font-semibold border-r-2 border-cyan-400 bg-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined">videocam</span>
+                Live Monitor
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">view_quilt</span>
+                Shelf Analysis
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+                Forecast
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">notifications_active</span>
+                Alerts
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+                Settings
+            </a>
+</nav>
+<div class="p-4 bg-slate-900 m-4 rounded-xl">
+<div class="flex items-center gap-3">
+<img alt="User Profile" class="w-10 h-10 rounded-full border border-outline-variant" data-alt="portrait of a focused professional male analyst in a modern office with tech lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7j7y8R54KdDcVwzy3tuAsHzjZ2Ro_D2tIlECb3drHkmtxHYoBy1pJR20M62LdEAxy017252PT1KAVMcDAoBlpPHyq_dC-bOm4jtMeY9PY6Rnt13oZKvJ2vGBhy8P5njroM8lGHJn4SgwT_73Umkv9atnel-3g-LdXCz6m94unwzW0gQSQaLh40FfnnU2e5dbVGza_JGV-3xt05PInms1QgLRnFzPiWZ0waxnkQwe9c6Y-oLuS03Gk7avvRSv3rhD1r7ren-TR24I"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-slate-100 truncate">Alex Chen</p>
+<p class="text-[10px] text-slate-500 truncate">Floor Manager</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 relative min-h-screen overflow-y-auto">
+<!-- TopNavBar (Shared Component) -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] flex justify-between items-center px-8 h-16 z-40 bg-slate-950/70 backdrop-blur-xl">
+<div class="flex items-center gap-6">
+<h2 class="text-lg font-black text-slate-50 font-inter">Retail Intelligence</h2>
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="w-full bg-slate-900 border-none text-sm rounded-lg pl-10 focus:ring-1 focus:ring-cyan-400 text-slate-300" placeholder="Search SKU, Aisle, or Brand..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-300 hover:text-cyan-300 transition-all p-2"><span class="material-symbols-outlined">location_on</span></button>
+<div class="relative">
+<button class="text-slate-300 hover:text-cyan-300 transition-all p-2"><span class="material-symbols-outlined">notifications</span></button>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</div>
+<button class="text-slate-300 hover:text-cyan-300 transition-all p-2"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="mt-16 p-8 space-y-8 max-w-[1600px] mx-auto">
+<!-- Breadcrumbs & Title -->
+<div class="flex justify-between items-end">
+<div class="space-y-1">
+<nav class="flex items-center gap-2 text-label-sm text-on-surface-variant text-xs">
+<span>Aisle 4</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span>Section B</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span class="text-primary font-medium">Shelf Detail</span>
+</nav>
+<h1 class="text-3xl font-extrabold text-on-surface tracking-tight">Section B: Beverages &amp; Tonics</h1>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-surface-container-highest text-on-surface text-sm font-medium rounded-lg flex items-center gap-2 hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined text-sm">refresh</span> Recalibrate Camera
+                    </button>
+<button class="px-4 py-2 bg-gradient-to-br from-primary-container to-primary text-on-primary text-sm font-bold rounded-lg flex items-center gap-2 shadow-lg shadow-primary/10 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-sm">print</span> Export Report
+                    </button>
+</div>
+</div>
+<!-- Bento Layout Start -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Large Camera View Panel (Col 8) -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<div class="relative group rounded-xl overflow-hidden bg-surface-container-low shadow-2xl border border-outline-variant/10">
+<!-- Camera Feed Placeholder -->
+<div class="aspect-video relative overflow-hidden">
+<img alt="Shelf View" class="w-full h-full object-cover opacity-80" data-alt="high-angle wide shot of a retail supermarket shelf stocked with various colorful beverage bottles under bright commercial lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBF6HrLB6YKp5AsjdLqm7jkvuSKvX34nzMe6BNXjt-E3HgbHc7UtP7Bo6qbiL2GV3KnDY0jS64-iaA6xXOsLEcvFePos5i5AI9Q8YpqBLztse6nDM04T7V_EEhJaslgNEozqTECv4zxgwreCZA4wlw5zCynR5UN_XihUNCpTKibF0n9x4Y-FDDDyAqvePODjZpXG-x170JTDnppPe_moiWtXIeWVOBnoZq55-9X9BHIoEprkbi5yr-gp2sHab5beeZyuDAq_ni50DA"/>
+<!-- Vision Overlays (SVG or Relative Divs) -->
+<div class="absolute inset-0 pointer-events-none">
+<!-- Example Bounding Boxes -->
+<div class="absolute top-[20%] left-[10%] w-[12%] h-[30%] border-2 border-primary/60 bg-primary/10 rounded-sm flex flex-col justify-end p-1">
+<span class="text-[8px] font-bold text-primary bg-slate-950/80 px-1 rounded-sm w-max">SKU_0982-OK</span>
+</div>
+<div class="absolute top-[20%] left-[23%] w-[12%] h-[30%] border-2 border-primary/60 bg-primary/10 rounded-sm flex flex-col justify-end p-1">
+<span class="text-[8px] font-bold text-primary bg-slate-950/80 px-1 rounded-sm w-max">SKU_0982-OK</span>
+</div>
+<div class="absolute top-[20%] left-[36%] w-[12%] h-[30%] border-2 border-error/60 bg-error/10 rounded-sm flex flex-col justify-end p-1">
+<span class="text-[8px] font-bold text-error bg-slate-950/80 px-1 rounded-sm w-max">SKU_0982-MISS</span>
+</div>
+<div class="absolute top-[55%] left-[55%] w-[15%] h-[35%] border-2 border-secondary/60 bg-secondary/10 rounded-sm flex flex-col justify-end p-1">
+<span class="text-[8px] font-bold text-secondary bg-slate-950/80 px-1 rounded-sm w-max">PRICE_MISMATCH</span>
+</div>
+</div>
+<!-- Controls Overlay -->
+<div class="absolute top-4 left-4 flex gap-2">
+<div class="px-2 py-1 rounded bg-slate-950/80 backdrop-blur-md text-[10px] font-bold flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span> LIVE: CAM_4B_NORTH
+                                </div>
+<div class="px-2 py-1 rounded bg-slate-950/80 backdrop-blur-md text-[10px] font-bold text-on-surface-variant">
+                                    4K • 60FPS • INFRARED OFF
+                                </div>
+</div>
+<!-- Bottom Interaction Bar -->
+<div class="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+<div class="flex gap-2">
+<button class="p-2 rounded bg-slate-950/80 backdrop-blur-md text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">zoom_in</span>
+</button>
+<button class="p-2 rounded bg-slate-950/80 backdrop-blur-md text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-sm">photo_camera</span>
+</button>
+</div>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 rounded bg-primary/20 backdrop-blur-md text-primary text-[10px] font-bold border border-primary/30">
+                                        DETECTIONS: 142
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Comparison Section -->
+<div class="grid grid-cols-2 gap-6 h-48">
+<div class="bg-surface-container rounded-xl p-4 flex flex-col justify-between border border-outline-variant/10">
+<div class="flex justify-between items-start">
+<span class="text-xs font-bold text-on-surface-variant tracking-wider uppercase">Planogram Reference</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">inventory</span>
+</div>
+<div class="flex gap-4 items-center">
+<img alt="Planogram Thumbnail" class="w-16 h-16 rounded object-cover grayscale opacity-50" data-alt="clean digital render of a retail shelving planogram with blueprint lines and product blocks" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgiH-IWIRmF9x18K1JwC0jz1S9Yw_4Pl84JVHvilRPNGmeGS-gVnCxrxN1Pmev58fXgRvCAyQFyYgJMP1fo9jV81HH9pkVD76d8WIRQipihKJonS1XHZjQsRIHF6EbTlKF-Ra5abazII8eC6WB90fQquBTEFrqkUDcSmzKkIK4rAx76juJ5Lg2EFTCrZxuLtFbvRnA-yYk6KnkYTKwevK6SYtFJnedCTKn9BnzlQKXAaEPYps7PUeFv45OxeK84aEBnxrAeYgtXdg"/>
+<div>
+<p class="text-2xl font-black text-on-surface">98% Match</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Last Update: 2h ago</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-4 flex flex-col justify-between border border-outline-variant/10">
+<div class="flex justify-between items-start">
+<span class="text-xs font-bold text-on-surface-variant tracking-wider uppercase">Health Index</span>
+<span class="material-symbols-outlined text-secondary text-sm">bolt</span>
+</div>
+<div class="flex gap-4 items-center">
+<div class="relative w-16 h-16">
+<svg class="w-full h-full" viewbox="0 0 36 36">
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#2d3546" stroke-width="3"></path>
+<path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#cecb5b" stroke-dasharray="82, 100" stroke-width="3"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-secondary">82%</div>
+</div>
+<div>
+<p class="text-2xl font-black text-secondary">-12% Low</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">Velocity: High (Aisle 4)</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Side Info Panel (Col 4) -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/10">
+<h3 class="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">crisis_alert</span> High Priority Alerts
+                        </h3>
+<div class="space-y-4">
+<!-- Alert Item -->
+<div class="bg-surface-container p-4 rounded-lg flex items-start gap-3 border-l-4 border-error">
+<div class="mt-1"><span class="material-symbols-outlined text-error text-lg" style="font-variation-settings: 'FILL' 1;">warning</span></div>
+<div class="flex-1">
+<p class="text-sm font-bold text-on-surface">Stockout: Spark Energy 250ml</p>
+<p class="text-xs text-on-surface-variant">4 expected facings detected as empty. Lost revenue estimated: $240/hr.</p>
+<button class="mt-3 px-3 py-1.5 bg-error/20 text-error text-[10px] font-bold rounded uppercase tracking-wider hover:bg-error/30 transition-colors">Mark as Replenished</button>
+</div>
+</div>
+<!-- Alert Item -->
+<div class="bg-surface-container p-4 rounded-lg flex items-start gap-3 border-l-4 border-secondary">
+<div class="mt-1"><span class="material-symbols-outlined text-secondary text-lg" style="font-variation-settings: 'FILL' 1;">error_outline</span></div>
+<div class="flex-1">
+<p class="text-sm font-bold text-on-surface">Price Mismatch: Alpine Water</p>
+<p class="text-xs text-on-surface-variant">Shelf tag shows $1.29. System lists $1.49. Risk of customer friction.</p>
+<button class="mt-3 px-3 py-1.5 bg-secondary/20 text-secondary text-[10px] font-bold rounded uppercase tracking-wider hover:bg-secondary/30 transition-colors">Verify Price Tag</button>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-6 border border-outline-variant/10">
+<h3 class="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">query_stats</span> CV Performance
+                        </h3>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-medium text-on-surface-variant">
+<span>Inference Latency</span>
+<span>24ms</span>
+</div>
+<div class="h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[90%]"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-xs font-medium text-on-surface-variant">
+<span>Model Confidence</span>
+<span>99.4%</span>
+</div>
+<div class="h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[99%]"></div>
+</div>
+</div>
+<div class="pt-4 border-t border-outline-variant/10">
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">Total SKU Detection Area</span>
+<span class="font-bold text-on-surface">14.2 sq.m</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SKU Data Table (Col 12) -->
+<div class="col-span-12 bg-surface-container-low rounded-xl border border-outline-variant/10 overflow-hidden">
+<div class="p-6 border-b border-outline-variant/10 flex justify-between items-center">
+<h3 class="text-lg font-bold text-on-surface">SKU-Level Detailed Analysis</h3>
+<div class="flex gap-2">
+<select class="bg-surface-container border-none text-xs rounded-lg text-on-surface-variant focus:ring-1 focus:ring-cyan-400">
+<option>Sort by Status</option>
+<option>Sort by SKU</option>
+<option>Sort by Mismatch</option>
+</select>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm">
+<thead class="bg-surface-container/50 text-on-surface-variant text-[10px] uppercase tracking-widest font-bold">
+<tr>
+<th class="px-6 py-4">Product Name / SKU</th>
+<th class="px-6 py-4">Expected vs. Detected</th>
+<th class="px-6 py-4">Stock Status</th>
+<th class="px-6 py-4">Price Accuracy</th>
+<th class="px-6 py-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<!-- Table Row -->
+<tr class="hover:bg-surface-container/30 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-slate-900 border border-outline-variant/10 overflow-hidden flex-shrink-0">
+<img alt="Product SKU" class="w-full h-full object-cover" data-alt="studio shot of a premium silver beverage can with minimalist branding on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNBjmKl6MtqDeWOoxM7-rLIpPTJqjquDI8g4Yqp8loTD37Bwyx9VeaRqHcJ1C9xt7tg7bgq9BiUpYPMDep9GYL6rHB8_K2v8X2jdIxHFT9Ya83Kk5fy29yW6q76wRkgi6RSJi0s0kMFGPgArvw_1lWam4s4ZuUW-NXCQ3ocllhBVvieMBOrjoqhDAAg240jDgc0i21fC0EG_vjesRfYLdfk5dXhqn-DQs1_lnB0tfQhxPhlu6F38xB2TkV8V55mG-04lh-ZO0Wb3Q"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Silver Stream Tonic 500ml</p>
+<p class="text-[10px] text-on-surface-variant font-mono">SKU-009827</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-medium">6</span>
+<span class="text-on-surface-variant text-xs">/</span>
+<span class="text-primary font-bold">6</span>
+<span class="material-symbols-outlined text-primary text-[14px]">check_circle</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">In Stock</span>
+</td>
+<td class="px-6 py-4 text-primary">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">verified</span> Match</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+<!-- Table Row (Alert) -->
+<tr class="bg-error/5 hover:bg-error/10 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-slate-900 border border-outline-variant/10 overflow-hidden flex-shrink-0">
+<img alt="Product SKU" class="w-full h-full object-cover" data-alt="studio shot of a vibrant red glass beverage bottle with condensation droplets" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkwSxiLpBe4ebOmVJ3CwxnF2O_hUQmkB4u3zVY8VEheWm3BdLniJniErP7jt7tttpwfKkZrxTdovV8-BQEBH5Qzpak9-9aTomL_JkOo_NXr3FxmZ7reneugkGp6qoPWNeZ0HeM4iV45Vx12fMPnv4lWdK-OEvt-qf1lz1tGZ2-BFzSTYeZZMEoRz5TJUvG38PxvcdP1oaShaDMBCMWEJLHneYBaqTrsg8INOOFQEE2LD0fm4TCRM0S5U43WF0icrYUGktq05zZ1ME"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Spark Energy 250ml</p>
+<p class="text-[10px] text-on-surface-variant font-mono">SKU-004412</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-medium">4</span>
+<span class="text-on-surface-variant text-xs">/</span>
+<span class="text-error font-bold">0</span>
+<span class="material-symbols-outlined text-error text-[14px]">warning</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded bg-error/10 text-error text-[10px] font-bold uppercase tracking-wider">Out of Stock</span>
+</td>
+<td class="px-6 py-4 text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">block</span> N/A</span>
+</td>
+<td class="px-6 py-4 text-right space-x-2">
+<button class="px-3 py-1 bg-primary text-on-primary text-[10px] font-bold rounded hover:opacity-90 transition-opacity">REPLENISH</button>
+</td>
+</tr>
+<!-- Table Row (Price Warning) -->
+<tr class="hover:bg-surface-container/30 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-slate-900 border border-outline-variant/10 overflow-hidden flex-shrink-0">
+<img alt="Product SKU" class="w-full h-full object-cover" data-alt="clear plastic water bottle with mountain logo on blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVwzRY6dwdsUGJNoZ0TCmskJPEBo2wzr_J_g3FI1JjvEEL6Pt3dcd1QJmDiwHJHjY5DwZC88XwI0ejWHbHf7Zlax4GFjdqoAoDBL4aoJ1lZh1d1KGllE3-5m3FpfrmpuLUOgTHdJcSMMf-AgZTgLNRpWwu5jCSlzTm3QGs7PzMx_bg7LHthJyXscpyjk98juT9XnEXjDl3nTeTjHrnTgZCjsb2WSYWy66pU8Vfz8sDGv8NYJnzVr-QKA_Bs8t33Y1dkIoJbWQGjL8"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Alpine Spring Water 1L</p>
+<p class="text-[10px] text-on-surface-variant font-mono">SKU-011233</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-medium">8</span>
+<span class="text-on-surface-variant text-xs">/</span>
+<span class="text-primary font-bold">5</span>
+<span class="material-symbols-outlined text-secondary text-[14px]">warning_amber</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded bg-secondary/10 text-secondary text-[10px] font-bold uppercase tracking-wider">Low Stock</span>
+</td>
+<td class="px-6 py-4 text-error font-medium">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">error</span> Mismatch</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="px-3 py-1 bg-secondary text-on-secondary text-[10px] font-bold rounded hover:opacity-90 transition-opacity">FIX PRICE</button>
+</td>
+</tr>
+<!-- Table Row -->
+<tr class="hover:bg-surface-container/30 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-slate-900 border border-outline-variant/10 overflow-hidden flex-shrink-0">
+<img alt="Product SKU" class="w-full h-full object-cover" data-alt="organic orange juice bottle with vibrant orange liquid and white label" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5OWGk_MrS4SwH0y2cRYUkYR4TE4GMsdMlKoFBZpUMs3Lf0pCqy9qyz7LfKsmiV59WQnJ1MjgmkqMFJUWikrWLfnM0aS0JivISWce9zmORnXopEmDU0FyQSG5I3IEB0J7YKO1tRllUu-kJAozyrV-z-NmbECEKBHH1BTpq0PXDYAWQMptKr5Q-E-jeekSSIfVU0mEFEB4vXK07DTuOa0ndez2axHpkYZo_0sSYIWazhObWRZN12oZd-kNJuEiADI9tKcput0CSEcM"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Pure Harvest OJ</p>
+<p class="text-[10px] text-on-surface-variant font-mono">SKU-002319</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="text-on-surface font-medium">10</span>
+<span class="text-on-surface-variant text-xs">/</span>
+<span class="text-primary font-bold">10</span>
+<span class="material-symbols-outlined text-primary text-[14px]">check_circle</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">In Stock</span>
+</td>
+<td class="px-6 py-4 text-primary">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">verified</span> Match</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for Quick Actions (Hidden on Detail Screens usually, but here as a Global Support) -->
+<!-- Not rendering as per suppression rule for details/specific focus pages -->
+</body></html>
