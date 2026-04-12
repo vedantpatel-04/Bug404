@@ -33,6 +33,8 @@ YOLO_MODEL = os.getenv(
     "YOLO_MODEL",
     str(_CUSTOM_WEIGHTS) if _CUSTOM_WEIGHTS.exists() else "yolov8n.pt"
 )
+# Base COCO model for person/general object detection (80 classes including 'person')
+YOLO_COCO_MODEL = os.getenv("YOLO_COCO_MODEL", "yolov8n.pt")
 DETECTION_CONFIDENCE = 0.35
 DETECTION_IOU_THRESHOLD = 0.45
 IMAGE_SIZE = 640

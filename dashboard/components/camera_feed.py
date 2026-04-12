@@ -172,36 +172,36 @@ def _capture_frame(source):
 
 
 def _run_detection_on_frame(frame, confidence=0.35):
-    """Run YOLOv8 inference on a single frame and draw boxes."""
+    """Run dual-model YOLOv8 inference: custom model for products + COCO model for people."""
     try:
-        from models.shelf_detector import ShelfDetector
-
-        detector = _get_cached_detector()
+        shelf_detector, coco_detector = _get_cached_detectors()
 
         start = time.time()
+        num_detections = 0
+        total_conf = 0
 
-        # Run YOLO directly on frame
-        if detector.model is not None:
+        # ── Product colors (cyan/teal palette) ────────────────────
+        product_colors = [
+            (110, 230, 238), (206, 203, 91), (255, 180, 171), (219, 226, 249),
+        ]
+        # ── Person color (green) ──────────────────────────────────
+        person_color = (0, 255, 100)
+
+        # --- Pass 1: Custom ShelfIQ model → product detection ---
+        if shelf_detector is not None:
             from config.settings import IMAGE_SIZE, DETECTION_IOU_THRESHOLD
-            results = detector.model(frame, conf=confidence, iou=DETECTION_IOU_THRESHOLD, imgsz=IMAGE_SIZE, verbose=False)
-            elapsed_ms = (time.time() - start) * 1000
-
-            num_detections = 0
-            total_conf = 0
-
-            colors = [
-                (110, 230, 238), (206, 203, 91), (255, 180, 171), (219, 226, 249),
-                (0, 255, 0), (255, 128, 0), (128, 255, 0), (255, 0, 255),
-            ]
-
+            results = shelf_detector.model(
+                frame, conf=confidence, iou=DETECTION_IOU_THRESHOLD,
+                imgsz=IMAGE_SIZE, verbose=False,
+            )
             for r in results:
                 for box in r.boxes:
                     x1, y1, x2, y2 = [int(v) for v in box.xyxy[0].cpu().numpy()]
                     conf = float(box.conf[0])
                     cls_id = int(box.cls[0])
-                    cls_name = detector.model.names.get(cls_id, f"class_{cls_id}")
+                    cls_name = shelf_detector.model.names.get(cls_id, f"product_{cls_id}")
 
-                    color = colors[cls_id % len(colors)]
+                    color = product_colors[cls_id % len(product_colors)]
                     cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
 
                     label = f"{cls_name} {conf:.0%}"
@@ -212,8 +212,33 @@ def _run_detection_on_frame(frame, confidence=0.35):
                     num_detections += 1
                     total_conf += conf
 
-            avg_conf = total_conf / max(num_detections, 1)
-            return frame, num_detections, avg_conf, elapsed_ms
+        # --- Pass 2: COCO model → person detection ----------------
+        if coco_detector is not None:
+            from config.settings import IMAGE_SIZE, DETECTION_IOU_THRESHOLD
+            # COCO class 0 = person; only detect people-related classes
+            coco_results = coco_detector(
+                frame, conf=0.40, iou=DETECTION_IOU_THRESHOLD,
+                imgsz=IMAGE_SIZE, verbose=False,
+                classes=[0],  # 0 = person in COCO
+            )
+            for r in coco_results:
+                for box in r.boxes:
+                    x1, y1, x2, y2 = [int(v) for v in box.xyxy[0].cpu().numpy()]
+                    conf = float(box.conf[0])
+
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), person_color, 2)
+
+                    label = f"person {conf:.0%}"
+                    (lw, lh), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                    cv2.rectangle(frame, (x1, y1 - lh - 8), (x1 + lw + 4, y1), person_color, -1)
+                    cv2.putText(frame, label, (x1 + 2, y1 - 4), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
+
+                    num_detections += 1
+                    total_conf += conf
+
+        elapsed_ms = (time.time() - start) * 1000
+        avg_conf = total_conf / max(num_detections, 1)
+        return frame, num_detections, avg_conf, elapsed_ms
 
     except Exception as e:
         print(f"  ⚠ Detection error: {e}")
@@ -222,7 +247,20 @@ def _run_detection_on_frame(frame, confidence=0.35):
 
 
 @st.cache_resource
-def _get_cached_detector():
-    """Cache the detector so it's not reloaded on every frame."""
+def _get_cached_detectors():
+    """Cache both the custom shelf detector and the COCO person detector."""
     from models.shelf_detector import ShelfDetector
-    return ShelfDetector()
+    from ultralytics import YOLO
+    from config.settings import YOLO_COCO_MODEL
+
+    # Custom product detector
+    shelf_det = ShelfDetector()
+
+    # COCO person detector (yolov8n.pt — downloads automatically if missing)
+    try:
+        coco_det = YOLO(YOLO_COCO_MODEL)
+    except Exception as e:
+        print(f"  ⚠ Could not load COCO model: {e}")
+        coco_det = None
+
+    return shelf_det, coco_det
