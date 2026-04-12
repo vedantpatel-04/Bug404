@@ -38,6 +38,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# --- Authentication Gate ---
+if not st.session_state.get("authenticated", False):
+    from dashboard.components.auth import render_auth_gate
+    render_auth_gate()
+    st.stop()
+
 # --- Sidebar ---
 with st.sidebar:
     # Branding
@@ -101,26 +107,45 @@ with st.sidebar:
     <div style="
         position: fixed; bottom: 0; left: 0; width: 240px;
         padding: 16px; z-index: 10;
+        background: linear-gradient(180deg, transparent, #0b1323 20%);
     ">
+    """, unsafe_allow_html=True)
+    
+    # Store user values
+    u_name = st.session_state.get("username", "Associate")
+    u_role = st.session_state.get("role", "Staff")
+    initials = u_name[:2].upper() if len(u_name) >= 2 else "U"
+
+    st.markdown(f"""
         <div style="
             background: rgba(20, 27, 44, 0.95);
             border-radius: 12px; padding: 12px 14px;
-            display: flex; align-items: center; gap: 10px;
+            display: flex; align-items: center; justify-content: space-between;
             border: 1px solid rgba(61, 73, 74, 0.1);
+            margin-bottom: 8px;
         ">
-            <div style="
-                width: 36px; height: 36px; border-radius: 50%;
-                background: linear-gradient(135deg, #4ecad2, #6ee6ee);
-                display: flex; align-items: center; justify-content: center;
-                color: #00373a; font-weight: 700; font-size: 0.8rem;
-            ">AS</div>
-            <div>
-                <div style="color: #e8eaf6; font-weight: 600; font-size: 0.82rem;">Arjun Sharma</div>
-                <div style="color: #69758a; font-size: 0.68rem;">Store Lead</div>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="
+                    width: 36px; height: 36px; border-radius: 50%;
+                    background: linear-gradient(135deg, #4ecad2, #6ee6ee);
+                    display: flex; align-items: center; justify-content: center;
+                    color: #00373a; font-weight: 700; font-size: 0.8rem;
+                ">{initials}</div>
+                <div style="max-width:100px; overflow:hidden;">
+                    <div style="color: #e8eaf6; font-weight: 600; font-size: 0.82rem; white-space:nowrap; text-overflow:ellipsis;">{u_name}</div>
+                    <div style="color: #69758a; font-size: 0.68rem;">{u_role}</div>
+                </div>
             </div>
         </div>
-    </div>
     """, unsafe_allow_html=True)
+
+    if st.button("🚪 Logout", key="logout_btn", use_container_width=True):
+        st.session_state["authenticated"] = False
+        st.session_state.pop("username", None)
+        st.session_state.pop("role", None)
+        st.rerun()
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # --- Page Router ---
 if page == "Dashboard":

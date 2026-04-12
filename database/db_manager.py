@@ -3,6 +3,8 @@ SQLite database manager — connection handling, CRUD helpers, and query utiliti
 """
 import sqlite3
 import json
+import os
+import hashlib
 from pathlib import Path
 from datetime import datetime
 from typing import Any, Optional
@@ -155,6 +157,52 @@ class DatabaseManager:
             "alert_id = ?",
             (alert_id,),
         )
+
+    # --- Authentication Methods ---
+    def hash_password(self, password: str, salt: bytes = None) -> tuple[str, str]:
+        """Hash a password using pbkdf2_hmac. Returns hex (hash, salt)."""
+        if salt is None:
+            salt = os.urandom(32)
+        key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+        return key.hex(), salt.hex()
+
+    def user_exists(self, username: str) -> bool:
+        """Check if user exists."""
+        return self.count("users", "username = ?", (username,)) > 0
+
+    def create_user(self, username: str, password: str, role: str = "Associate") -> bool:
+        """Hash and save new user. Returns True if successful, False if already exists."""
+        if self.user_exists(username):
+            return False
+        
+        pwd_hash, salt = self.hash_password(password)
+        try:
+            self.insert("users", {
+                "username": username,
+                "password_hash": pwd_hash,
+                "salt": salt,
+                "role": role
+            })
+            return True
+        except sqlite3.IntegrityError:
+            return False
+
+    def verify_user(self, username: str, password: str) -> Optional[dict]:
+        """Verify username & password. Returns user dict on success, None otherwise."""
+        user = self.fetch_one("users", "username = ?", (username,))
+        if not user:
+            return None
+        
+        salt_bytes = bytes.fromhex(user["salt"])
+        input_hash, _ = self.hash_password(password, salt_bytes)
+        
+        if input_hash == user["password_hash"]:
+            return dict(user)
+        return None
+
+    def get_user_count(self) -> int:
+        """Return total number of registered users."""
+        return self.count("users")
 
 
 # Singleton instance
