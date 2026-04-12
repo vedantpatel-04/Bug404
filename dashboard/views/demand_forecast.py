@@ -129,138 +129,227 @@ def _render_forecast_chart():
         </div>
     """, unsafe_allow_html=True)
 
-    # ── Dynamic seed based on parameters ──────────────────────────
-    seed_val = 101 + safety + horizon_days
+    # ── Dynamic seed — changes when ANY toggle/param changes ──────
+    toggle_hash = int(weather_on) * 1 + int(holiday_on) * 2 + int(competitor_on) * 4
+    seed_val = 101 + safety + horizon_days + toggle_hash * 37
     np.random.seed(int(seed_val) % (2**31))
 
     today = datetime.now().date()
-    hist_dates = pd.date_range(end=today - timedelta(days=1), periods=30, freq="D")
+    hist_dates = pd.date_range(end=today - timedelta(days=1), periods=60, freq="D")
     fore_dates = pd.date_range(start=today, periods=horizon_days, freq="D")
 
-    # Generate base data
-    hist_values = np.cumsum(np.random.randn(30) * 15 + 5) + 200
-    fore_base = hist_values[-1] + np.cumsum(np.random.randn(horizon_days) * 10 + 8)
+    # ── Realistic historical data with weekly seasonality ─────────
+    base_demand = 220
+    t_hist = np.arange(len(hist_dates))
+    weekly_pattern = 15 * np.sin(2 * np.pi * t_hist / 7)  # Weekly cycle
+    trend = 0.4 * t_hist  # Slight upward trend
+    noise = np.random.randn(len(hist_dates)) * 12
+    hist_values = base_demand + weekly_pattern + trend + noise
 
-    # Competitor noise
+    # ── Forecast base with weekly seasonality ─────────────────────
+    t_fore = np.arange(len(fore_dates))
+    weekly_fore = 15 * np.sin(2 * np.pi * (t_fore + len(hist_dates)) / 7)
+    trend_fore = 0.4 * (t_fore + len(hist_dates))
+    base_noise = np.random.randn(horizon_days) * 8
+    fore_base = base_demand + weekly_fore + trend_fore + base_noise
+
+    # ══════════════════════════════════════════════════════════════
+    # EXTERNAL FACTORS — each toggle creates a VISIBLE change
+    # ══════════════════════════════════════════════════════════════
+
+    # ---- WEATHER API: Heat waves increase beverage demand --------
+    weather_events = []
+    if weather_on:
+        # Simulate daily temperatures (Indian summer 28-42°C)
+        temperatures = np.random.uniform(28, 42, horizon_days)
+        # Hot days (>36°C) boost demand significantly
+        heat_boost = np.where(temperatures > 36, (temperatures - 36) * 8, 0)
+        # Monsoon days reduce foot traffic
+        rain_days = np.random.random(horizon_days) < 0.15
+        rain_penalty = np.where(rain_days, -25, 0)
+        fore_base += heat_boost + rain_penalty
+
+        # Mark hottest day for annotation
+        hottest_idx = int(np.argmax(temperatures))
+        weather_events.append((hottest_idx, temperatures[hottest_idx], "heat"))
+        # Mark a rainy day if exists
+        rain_indices = np.where(rain_days)[0]
+        if len(rain_indices) > 0:
+            weather_events.append((int(rain_indices[0]), 0, "rain"))
+
+    # ---- HOLIDAYS: Indian festivals create demand spikes ---------
+    holiday_events = []
+    if holiday_on:
+        # Real Indian public holidays & events calendar
+        indian_holidays = {
+            "Diwali": {"boost": 65, "duration": 3},
+            "Holi": {"boost": 40, "duration": 2},
+            "Navratri": {"boost": 50, "duration": 3},
+            "Republic Day": {"boost": 25, "duration": 1},
+            "Independence Day": {"boost": 30, "duration": 1},
+            "Ganesh Chaturthi": {"boost": 35, "duration": 2},
+            "Eid": {"boost": 40, "duration": 2},
+            "Christmas": {"boost": 30, "duration": 2},
+            "IPL Match Day": {"boost": 20, "duration": 1},
+            "Weekend Sale": {"boost": 15, "duration": 2},
+        }
+
+        # Place holidays at realistic intervals across the forecast
+        holiday_positions = np.linspace(3, max(horizon_days - 3, 4), min(4, horizon_days // 7 + 1)).astype(int)
+        holiday_names = list(indian_holidays.keys())
+        np.random.shuffle(holiday_names)
+
+        for i, pos in enumerate(holiday_positions):
+            if pos >= horizon_days:
+                continue
+            h_name = holiday_names[i % len(holiday_names)]
+            h_info = indian_holidays[h_name]
+            for d in range(h_info["duration"]):
+                idx = min(pos + d, horizon_days - 1)
+                fore_base[idx] += h_info["boost"]
+            holiday_events.append((pos, h_name, h_info["boost"]))
+
+    # ---- COMPETITOR PRICING: Competitor discounts pull demand ----
+    competitor_events = []
     if competitor_on:
-        fore_base += np.random.randn(horizon_days) * 8
+        # Simulate competitor flash sales that steal market share
+        num_competitor_events = max(1, horizon_days // 15)
+        comp_positions = np.random.choice(range(2, horizon_days - 1), size=num_competitor_events, replace=False)
+        for pos in comp_positions:
+            discount_pct = np.random.randint(10, 30)
+            demand_loss = discount_pct * 1.5  # Each 1% competitor discount = ~1.5 units lost
+            duration = np.random.randint(2, 5)
+            for d in range(duration):
+                idx = min(pos + d, horizon_days - 1)
+                fore_base[idx] -= demand_loss
+            competitor_events.append((pos, discount_pct, duration))
 
-    # Confidence band width scales with safety stock level
-    band_scale = safety / 15.0  # 15 is default, so 1.0 = normal
-    fore_upper = fore_base + np.random.uniform(20, 40, horizon_days) * band_scale
-    fore_lower = fore_base - np.random.uniform(15, 30, horizon_days) * band_scale
+    # ── Ensure no negative demand ─────────────────────────────────
+    fore_base = np.maximum(fore_base, 50)
+
+    # ── Confidence band width scales with safety stock level ──────
+    band_scale = safety / 15.0
+    uncertainty_growth = np.linspace(1, 1.8, horizon_days)  # Increases over time
+    fore_upper = fore_base + np.random.uniform(18, 35, horizon_days) * band_scale * uncertainty_growth
+    fore_lower = fore_base - np.random.uniform(12, 25, horizon_days) * band_scale * uncertainty_growth
+    fore_lower = np.maximum(fore_lower, 20)
 
     fig = go.Figure()
 
     # ── Aggregate by frequency ────────────────────────────────────
     if freq == "Weekly":
-        # Resample to weekly
         hist_df = pd.DataFrame({"date": hist_dates, "value": hist_values})
         hist_df = hist_df.set_index("date").resample("W").mean().reset_index()
-
         fore_df = pd.DataFrame({"date": fore_dates, "base": fore_base, "upper": fore_upper, "lower": fore_lower})
         fore_df = fore_df.set_index("date").resample("W").mean().reset_index()
-
         h_dates, h_values = hist_df["date"], hist_df["value"]
         f_dates, f_base, f_upper, f_lower = fore_df["date"], fore_df["base"], fore_df["upper"], fore_df["lower"]
     elif freq == "Monthly":
         hist_df = pd.DataFrame({"date": hist_dates, "value": hist_values})
         hist_df = hist_df.set_index("date").resample("ME").mean().reset_index()
-
         fore_df = pd.DataFrame({"date": fore_dates, "base": fore_base, "upper": fore_upper, "lower": fore_lower})
         fore_df = fore_df.set_index("date").resample("ME").mean().reset_index()
-
         h_dates, h_values = hist_df["date"], hist_df["value"]
         f_dates, f_base, f_upper, f_lower = fore_df["date"], fore_df["base"], fore_df["upper"], fore_df["lower"]
-    else:  # Daily (default)
+    else:  # Daily
         h_dates, h_values = hist_dates, hist_values
         f_dates, f_base, f_upper, f_lower = fore_dates, fore_base, fore_upper, fore_lower
 
     if is_histogram:
-        # ── Histogram mode ────────────────────────────────────────
         fig.add_trace(go.Bar(
-            x=h_dates, y=h_values,
-            name="Historical",
+            x=h_dates, y=h_values, name="Historical",
             marker=dict(color="rgba(188,201,202,0.5)", line=dict(width=0)),
         ))
         fig.add_trace(go.Bar(
-            x=f_dates, y=f_base,
-            name="Forecast",
+            x=f_dates, y=f_base, name="Forecast",
             marker=dict(color="rgba(110,230,238,0.6)", line=dict(width=0)),
         ))
         fig.update_layout(barmode="group", bargap=0.15)
     else:
-        # ── Line Graph mode ───────────────────────────────────────
         # Historical
         fig.add_trace(go.Scatter(
-            x=h_dates, y=h_values,
-            mode="lines", name="Historical",
+            x=h_dates, y=h_values, mode="lines", name="Historical",
             line=dict(color="#bcc9ca", width=1.5),
         ))
-
         # Confidence band
         fig.add_trace(go.Scatter(
             x=list(f_dates) + list(f_dates[::-1]),
             y=list(f_upper) + list(f_lower[::-1]),
             fill="toself", fillcolor="rgba(110,230,238,0.06)",
-            line=dict(width=0), name="Confidence",
-            showlegend=False,
+            line=dict(width=0), name="Confidence", showlegend=False,
         ))
-
         # Forecast
         fig.add_trace(go.Scatter(
-            x=f_dates, y=f_base,
-            mode="lines", name="Forecast",
+            x=f_dates, y=f_base, mode="lines", name="Forecast",
             line=dict(color="#6ee6ee", width=2.5),
         ))
 
     # TODAY marker
     today_str = today.isoformat()
     fig.add_shape(
-        type="line", x0=today_str, x1=today_str,
-        y0=0, y1=1, yref="paper",
+        type="line", x0=today_str, x1=today_str, y0=0, y1=1, yref="paper",
         line=dict(color="rgba(110,230,238,0.4)", width=2, dash="dash"),
     )
     fig.add_annotation(
-        x=today_str, y=0, yref="paper",
-        text="TODAY", showarrow=False,
-        font=dict(color="#6ee6ee", size=10, family="Inter"),
-        yshift=-15,
+        x=today_str, y=0, yref="paper", text="TODAY", showarrow=False,
+        font=dict(color="#6ee6ee", size=10, family="Inter"), yshift=-15,
     )
 
-    # Weather annotation (only if toggle is on)
-    if weather_on and len(f_dates) > 8:
-        weather_idx = min(8, len(f_dates) - 1)
-        weather_date = f_dates.iloc[weather_idx] if hasattr(f_dates, 'iloc') else f_dates[weather_idx]
-        fig.add_annotation(
-            x=weather_date,
-            y=float(f_base.iloc[weather_idx] if hasattr(f_base, 'iloc') else f_base[weather_idx]),
-            text="&#9728; +32°C",
-            showarrow=True, arrowhead=2, arrowcolor="#cecb5b",
-            font=dict(color="#cecb5b", size=10),
-            bgcolor="rgba(20,27,44,0.8)", bordercolor="#cecb5b",
-            borderwidth=1, borderpad=4,
-        )
+    # ── Weather annotations ───────────────────────────────────────
+    if weather_on and weather_events:
+        for ev_idx, temp, ev_type in weather_events:
+            if ev_idx >= len(f_dates):
+                continue
+            ev_date = f_dates.iloc[ev_idx] if hasattr(f_dates, 'iloc') else f_dates[ev_idx]
+            ev_val = float(f_base.iloc[ev_idx] if hasattr(f_base, 'iloc') else f_base[ev_idx])
+            if ev_type == "heat":
+                fig.add_annotation(
+                    x=ev_date, y=ev_val,
+                    text=f"☀ {temp:.0f}°C", showarrow=True, arrowhead=2, arrowcolor="#cecb5b",
+                    font=dict(color="#cecb5b", size=10),
+                    bgcolor="rgba(20,27,44,0.8)", bordercolor="#cecb5b", borderwidth=1, borderpad=4,
+                )
+            elif ev_type == "rain":
+                fig.add_annotation(
+                    x=ev_date, y=ev_val,
+                    text="🌧 Monsoon", showarrow=True, arrowhead=2, arrowcolor="#5b9ecb",
+                    font=dict(color="#5b9ecb", size=10),
+                    bgcolor="rgba(20,27,44,0.8)", bordercolor="#5b9ecb", borderwidth=1, borderpad=4,
+                )
 
-    # Promo annotation (only if toggle is on)
-    if holiday_on and len(f_dates) > 18:
-        promo_idx = min(18, len(f_dates) - 1)
-        promo_date = f_dates.iloc[promo_idx] if hasattr(f_dates, 'iloc') else f_dates[promo_idx]
-        fig.add_annotation(
-            x=promo_date,
-            y=float(f_base.iloc[promo_idx] if hasattr(f_base, 'iloc') else f_base[promo_idx]),
-            text="&#x1F4B0; BOGO PROMO",
-            showarrow=True, arrowhead=2, arrowcolor="#6ee6ee",
-            font=dict(color="#00373a", size=9),
-            bgcolor="#6ee6ee", borderpad=4,
-        )
+    # ── Holiday annotations ───────────────────────────────────────
+    if holiday_on and holiday_events:
+        for h_idx, h_name, h_boost in holiday_events:
+            if h_idx >= len(f_dates):
+                continue
+            h_date = f_dates.iloc[h_idx] if hasattr(f_dates, 'iloc') else f_dates[h_idx]
+            h_val = float(f_base.iloc[h_idx] if hasattr(f_base, 'iloc') else f_base[h_idx])
+            fig.add_annotation(
+                x=h_date, y=h_val,
+                text=f"🎉 {h_name}", showarrow=True, arrowhead=2, arrowcolor="#6ee6ee",
+                font=dict(color="#00373a", size=9), bgcolor="#6ee6ee", borderpad=4,
+            )
+
+    # ── Competitor annotations ────────────────────────────────────
+    if competitor_on and competitor_events:
+        for c_idx, c_discount, c_dur in competitor_events:
+            if c_idx >= len(f_dates):
+                continue
+            c_date = f_dates.iloc[c_idx] if hasattr(f_dates, 'iloc') else f_dates[c_idx]
+            c_val = float(f_base.iloc[c_idx] if hasattr(f_base, 'iloc') else f_base[c_idx])
+            fig.add_annotation(
+                x=c_date, y=c_val,
+                text=f"⚔ Rival -{c_discount}%", showarrow=True, arrowhead=2, arrowcolor="#ffb4ab",
+                font=dict(color="#ffb4ab", size=9),
+                bgcolor="rgba(20,27,44,0.8)", bordercolor="#ffb4ab", borderwidth=1, borderpad=4,
+            )
 
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#bcc9ca", size=10, family="Inter"),
-        height=320, margin=dict(l=40, r=10, t=10, b=40),
+        height=340, margin=dict(l=40, r=10, t=10, b=40),
         xaxis=dict(gridcolor="rgba(61,73,74,0.1)", tickformat="%b %d"),
-        yaxis=dict(gridcolor="rgba(61,73,74,0.1)"),
+        yaxis=dict(gridcolor="rgba(61,73,74,0.1)", title="Units", title_font=dict(size=10)),
         showlegend=False,
     )
     st.plotly_chart(fig, use_container_width=True)
