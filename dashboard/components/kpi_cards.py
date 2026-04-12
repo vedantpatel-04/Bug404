@@ -88,20 +88,5 @@ def render_alert_card(title: str, subtitle: str, badge_text: str, badge_type: st
 
 
 def render_footer():
-    """Render the global status footer bar."""
-    from datetime import datetime
-    now = datetime.now().strftime("%H:%M:%S GMT")
-    html = (
-        '<div class="status-footer" style="margin-top:40px;">'
-        '<div style="display:flex;align-items:center;gap:8px;">'
-        '<span style="width:6px;height:6px;border-radius:50%;background:#6ee6ee;"></span>'
-        'Models Online'
-        '</div>'
-        f'<div>Last Computation: {now}</div>'
-        '<div>Data Latency: <span style="color:#6ee6ee;">420ms</span></div>'
-        '<div style="display:flex;align-items:center;gap:6px;">'
-        '&#x1F512; Encrypted Session'
-        '</div>'
-        '</div>'
-    )
-    st.markdown(html, unsafe_allow_html=True)
+    """Footer removed — no longer rendered."""
+    pass

@@ -1,5 +1,5 @@
 """
-Smart Store Page -- Amazon Go-Inspired Autonomous Retail Intelligence
+Smart Store Page -- Autonomous Retail Intelligence
 """
 import sys
 from pathlib import Path
@@ -24,7 +24,7 @@ def render(store_id: str):
     )
     st.markdown("""
     <div style="color:#bcc9ca;font-size:0.82rem;margin-top:-20px;margin-bottom:20px;">
-        Inspired by Amazon Go &bull; Computer Vision + Weight Sensor Fusion
+        ShelfIQ Vision &bull; Computer Vision + Weight Sensor Fusion
     </div>
     """, unsafe_allow_html=True)
 
@@ -67,38 +67,16 @@ def render(store_id: str):
 
 
 def _render_camera_grid():
-    """Multi-camera surveillance grid."""
-    render_section_header("Ceiling Camera Grid", "24 overhead cameras &bull; 4K &bull; 60FPS")
+    """Live camera feed with real-time AI detection."""
+    render_section_header("Live Camera Feed", "Real-time AI product detection")
 
-    grid = ""
-    cams = [
-        ("CAM-01", "Entrance", "optimal"), ("CAM-02", "Produce", "optimal"),
-        ("CAM-03", "Aisle 1-2", "low"), ("CAM-04", "Aisle 3-4", "critical"),
-        ("CAM-05", "Checkout", "optimal"), ("CAM-06", "Frozen", "optimal"),
-    ]
-    colors = {"optimal": "#6ee6ee", "low": "#cecb5b", "critical": "#ffb4ab"}
-
-    for cam_id, zone, status in cams:
-        c = colors[status]
-        r, g, b = int(c[1:3], 16), int(c[3:5], 16), int(c[5:7], 16)
-        grid += (
-            f'<div style="background:#141b2c;border-radius:8px;padding:14px;border:1px solid rgba({r},{g},{b},0.15);display:flex;flex-direction:column;gap:6px;">'
-            f'<div style="display:flex;justify-content:space-between;align-items:center;">'
-            f'<span style="color:#bcc9ca;font-size:0.7rem;font-weight:600;">{cam_id}</span>'
-            f'<span style="width:8px;height:8px;border-radius:50%;background:rgba({r},{g},{b},0.8);"></span>'
-            f'</div>'
-            f'<div style="height:60px;background:#0b1323;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#69758a;font-size:0.65rem;">&#x1F4F9; {zone}</div>'
-            f'<span style="color:{c};font-size:0.6rem;font-weight:500;">{status.upper()}</span>'
-            f'</div>'
-        )
-
-    st.markdown(f"""
-    <div class="panel" style="padding:16px;">
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
-            {grid}
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    from dashboard.components.camera_feed import render_camera_feed
+    render_camera_feed(
+        source=0,
+        camera_id="CAM_SMART",
+        run_detection=True,
+        confidence=0.35,
+    )
 
 
 def _render_customer_journey():

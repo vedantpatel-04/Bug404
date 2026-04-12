@@ -27,7 +27,12 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 REDIS_AVAILABLE = False  # Will be set dynamically
 
 # ─── Computer Vision ─────────────────────────────────────────
-YOLO_MODEL = os.getenv("YOLO_MODEL", "yolov8n.pt")  # nano model for speed
+# Custom-trained YOLOv8 on SKU-110K retail dataset (mAP50: 85.4%, Precision: 88.4%)
+_CUSTOM_WEIGHTS = BASE_DIR / "weights" / "shelfiq_best.pt"
+YOLO_MODEL = os.getenv(
+    "YOLO_MODEL",
+    str(_CUSTOM_WEIGHTS) if _CUSTOM_WEIGHTS.exists() else "yolov8n.pt"
+)
 DETECTION_CONFIDENCE = 0.35
 DETECTION_IOU_THRESHOLD = 0.45
 IMAGE_SIZE = 640

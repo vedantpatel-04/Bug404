@@ -75,7 +75,6 @@ def _render_alert_inbox():
             </div>
             <div style="display:flex;gap:6px;">
                 <span style="background:rgba(110,230,238,0.12);color:#6ee6ee;font-size:0.68rem;padding:4px 10px;border-radius:4px;font-weight:600;">Priority</span>
-                <span style="background:#222a3b;color:#bcc9ca;font-size:0.68rem;padding:4px 10px;border-radius:4px;">Time</span>
             </div>
         </div>
         <div style="padding:14px;">
@@ -125,8 +124,37 @@ def _render_alert_inbox():
                 "corrective": a.corrective_action or a.suggested_action,
             })
 
-    for a in alerts:
+    # -- Inject Manual Tasks from Session State --
+    manual_tasks = st.session_state.get("manual_tasks", [])
+    for task in reversed(manual_tasks):
+        alerts.insert(0, {
+            "impact": "CRITICAL RESTOCK &mdash; HIGHEST",
+            "color": "#ffb4ab",
+            "time": "just now",
+            "title": task.get("title", "Manual Task"),
+            "detail": task.get("location", "Unknown Location"),
+            "corrective": task.get("detail", "Requires immediate attention"),
+        })
+
+    # Initialize assigned alerts tracker
+    if "assigned_alerts" not in st.session_state:
+        st.session_state["assigned_alerts"] = {}
+
+    associates_list = ["Priya M.", "Rajesh D.", "Amit K.", "Kavita L.", "Sneha R.", "Vikram S."]
+
+    for idx, a in enumerate(alerts):
+        alert_key = f"alert_{idx}"
+        is_assigned = alert_key in st.session_state["assigned_alerts"]
+
         r, g, b = int(a['color'][1:3], 16), int(a['color'][3:5], 16), int(a['color'][5:7], 16)
+
+        # Build status badge
+        if is_assigned:
+            assigned_to = st.session_state["assigned_alerts"][alert_key]
+            status_html = f'<span style="color:#6ee6ee;font-size:0.65rem;font-weight:600;">✅ Assigned to {assigned_to}</span>'
+        else:
+            status_html = ''
+
         card_html = (
             f'<div style="background:#222a3b;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid rgba({r},{g},{b},0.2);">'
             f'<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'
@@ -138,19 +166,29 @@ def _render_alert_inbox():
             f'<div style="flex:1;">'
             f'<div style="color:#dbe2f9;font-weight:700;font-size:0.88rem;">{a["title"]}</div>'
             f'<div style="color:#bcc9ca;font-size:0.72rem;margin-top:2px;">{a["detail"]}</div>'
-            # Corrective action line (CHANGE 5)
             f'<div style="color:#6ee6ee;font-size:0.70rem;margin-top:6px;padding:6px 8px;background:rgba(110,230,238,0.06);border-radius:6px;border-left:2px solid #6ee6ee;">'
             f'&#x1F527; <b>Action:</b> {a["corrective"]}'
             f'</div>'
-            f'<div style="display:flex;gap:8px;margin-top:10px;">'
-            f'<span style="background:rgba(110,230,238,0.12);color:#6ee6ee;font-size:0.65rem;padding:5px 12px;border-radius:4px;font-weight:600;cursor:pointer;">&#x1F4CB; Assign</span>'
-            f'<span style="background:#2d3546;color:#bcc9ca;font-size:0.65rem;padding:5px 12px;border-radius:4px;cursor:pointer;">Details</span>'
-            f'</div>'
+            f'{status_html}'
             f'</div>'
             f'</div>'
             f'</div>'
         )
         st.markdown(card_html, unsafe_allow_html=True)
+
+        # Real Streamlit buttons for Assign and Details
+        if not is_assigned:
+            btn_col1, btn_col2 = st.columns(2)
+            with btn_col1:
+                if st.button(f"📋 Assign", key=f"assign_{idx}", use_container_width=True):
+                    # Auto-assign to a random associate
+                    import random
+                    assignee = random.choice(associates_list)
+                    st.session_state["assigned_alerts"][alert_key] = assignee
+                    st.rerun()
+            with btn_col2:
+                if st.button(f"🔍 Details", key=f"details_{idx}", use_container_width=True):
+                    st.info(f"**{a['title']}**\n\n{a['detail']}\n\n**Corrective Action:** {a['corrective']}")
 
     st.markdown("</div></div>", unsafe_allow_html=True)
 

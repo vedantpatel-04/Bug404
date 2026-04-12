@@ -36,10 +36,7 @@ def render(store_id: str):
     </div>
     """, unsafe_allow_html=True)
 
-    # Functional buttons row
-    btn_col1, btn_col2, btn_spacer = st.columns([1, 1, 4])
-    with btn_col1:
-        recalib = st.button("↻ Recalibrate Camera", use_container_width=True)
+    # Functional buttons row (removed Recalibrate Camera - no longer needed with real feed)
 
     # --- Main Layout ---
     col_camera, col_alerts = st.columns([5, 3])
@@ -63,35 +60,14 @@ def render(store_id: str):
 
 
 def _render_camera_feed():
-    """Camera feed with detection overlay."""
-    det_count = np.random.randint(100, 200)
-    html = (
-        '<div style="background:linear-gradient(135deg,#141b2c,#0b1323);border-radius:12px;border:1px solid rgba(61,73,74,0.15);height:300px;position:relative;overflow:hidden;">'
-        '<div style="position:absolute;top:10px;left:10px;display:flex;gap:8px;z-index:2;">'
-        '<span style="background:rgba(110,230,238,0.15);color:#6ee6ee;font-size:0.6rem;padding:4px 10px;border-radius:4px;font-weight:600;">&#x1F7E2; LIVE: CAM_4B_NORTH</span>'
-        '<span style="background:rgba(20,27,44,0.8);color:#bcc9ca;font-size:0.55rem;padding:4px 8px;border-radius:3px;">4K &bull; 60FPS &bull; INFRARED OFF</span>'
-        '</div>'
-        '<div style="position:absolute;top:80px;left:60px;width:100px;height:70px;border:2px solid #6ee6ee;border-radius:4px;">'
-        '<span style="position:absolute;bottom:-18px;left:0;background:#6ee6ee;color:#00373a;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">SKU_0082-OK</span>'
-        '</div>'
-        '<div style="position:absolute;top:70px;left:180px;width:90px;height:80px;border:2px solid #6ee6ee;border-radius:4px;">'
-        '<span style="position:absolute;bottom:-18px;left:0;background:#6ee6ee;color:#00373a;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">SKU_0082-OK</span>'
-        '</div>'
-        '<div style="position:absolute;top:65px;left:290px;width:85px;height:75px;border:2px solid #ffb4ab;border-radius:4px;">'
-        '<span style="position:absolute;bottom:-18px;left:0;background:#ffb4ab;color:#690005;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">SKU_0082-MISS</span>'
-        '</div>'
-        '<div style="position:absolute;bottom:60px;left:220px;width:110px;height:60px;border:2px dashed #cecb5b;border-radius:4px;">'
-        '<span style="position:absolute;bottom:-18px;left:0;background:#cecb5b;color:#333200;font-size:0.5rem;padding:2px 6px;border-radius:2px;font-weight:700;">PRICE_MISMATCH</span>'
-        '</div>'
-        '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#69758a;">&#x1F4F9; Shelf Camera Feed</div>'
-        '<div style="position:absolute;bottom:10px;left:10px;display:flex;gap:6px;">'
-        '<div style="width:30px;height:30px;background:rgba(20,27,44,0.8);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#bcc9ca;font-size:0.8rem;cursor:pointer;">&#x1F50D;</div>'
-        '<div style="width:30px;height:30px;background:rgba(20,27,44,0.8);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#bcc9ca;font-size:0.8rem;cursor:pointer;">&#x1F4F7;</div>'
-        '</div>'
-        f'<div style="position:absolute;bottom:10px;right:10px;background:rgba(110,230,238,0.15);color:#6ee6ee;font-size:0.6rem;padding:4px 10px;border-radius:4px;font-weight:600;">DETECTIONS: {det_count}</div>'
-        '</div>'
+    """Live camera feed with real-time AI detection for planogram compliance."""
+    from dashboard.components.camera_feed import render_camera_feed
+    render_camera_feed(
+        source=0,
+        camera_id="CAM_PLANO",
+        run_detection=True,
+        confidence=0.35,
     )
-    st.markdown(html, unsafe_allow_html=True)
 
 
 def _render_planogram_health():

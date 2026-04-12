@@ -224,6 +224,33 @@ class ShelfAnalysisPipeline:
             print(f"  ⚠ Could not save to database: {e}")
 
 
+def process_shelf_image(image_path: str, store_id: str = "STORE01", aisle_id: str = "A01") -> dict:
+    """
+    Convenience function: run a single image through the full pipeline.
+    Returns a dict with detections, stock levels, and annotated image path.
+
+    Usage:
+        from pipeline.shelf_analysis_pipeline import process_shelf_image
+        result = process_shelf_image("path/to/shelf.jpg")
+    """
+    pipeline = ShelfAnalysisPipeline()
+    analysis = pipeline.analyze_image(image_path, store_id=store_id, aisle_id=aisle_id)
+
+    # Also generate annotated image with bounding boxes
+    annotated = pipeline.detector.draw_detections(image_path, pipeline.detector.detect_products(image_path))
+    annotated_path = str(Path(image_path).parent / f"annotated_{Path(image_path).name}")
+    cv2.imwrite(annotated_path, annotated)
+
+    return {
+        "analysis": analysis,
+        "annotated_image_path": annotated_path,
+        "num_detections": analysis.num_detections,
+        "health_score": analysis.shelf_health_score,
+        "alerts": analysis.alerts,
+        "stock_levels": analysis.stock_levels,
+    }
+
+
 if __name__ == "__main__":
     print("Running shelf analysis pipeline...")
     pipeline = ShelfAnalysisPipeline()
@@ -234,3 +261,4 @@ if __name__ == "__main__":
         print(f"  Health Score: {r.shelf_health_score}%")
         print(f"  Alerts: {len(r.alerts)}")
         print(f"  Processing: {r.processing_time_ms:.0f}ms")
+

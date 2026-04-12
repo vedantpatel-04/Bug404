@@ -43,7 +43,8 @@ class ShelfDetectionResult:
 class ShelfDetector:
     """
     YOLOv8-based product detector for retail shelf images.
-    Falls back to a synthetic detection mode when YOLO weights aren't available.
+    Loads custom-trained weights (shelfiq_best.pt) when available,
+    falls back to generic yolov8n.pt, then to synthetic mode.
     """
 
     def __init__(self, model_path: Optional[str] = None, confidence: float = DETECTION_CONFIDENCE):
@@ -52,12 +53,19 @@ class ShelfDetector:
         self.model = None
         self.use_synthetic = False
 
+        # Resolve model path: explicit arg → config → fallback
+        resolved_path = model_path or YOLO_MODEL
+        custom_weights = WEIGHTS_DIR.parent / "weights" / "shelfiq_best.pt"
+        if not model_path and custom_weights.exists():
+            resolved_path = str(custom_weights)
+
         # Try to load YOLO model
         try:
             from ultralytics import YOLO
-            mp = model_path or YOLO_MODEL
-            self.model = YOLO(mp)
-            print(f"  ✓ YOLOv8 model loaded: {mp}")
+            self.model = YOLO(resolved_path)
+            is_custom = "shelfiq" in str(resolved_path).lower()
+            tag = "CUSTOM-TRAINED" if is_custom else "PRE-TRAINED"
+            print(f"  ✓ YOLOv8 model loaded [{tag}]: {resolved_path}")
         except Exception as e:
             print(f"  ⚠ YOLOv8 not available ({e}), using synthetic detection mode")
             self.use_synthetic = True
@@ -143,6 +151,48 @@ class ShelfDetector:
                     class_name=cls_name,
                 ))
         return detections
+
+    def detect_frame(self, frame: np.ndarray) -> ShelfDetectionResult:
+        """
+        Run detection on a raw video frame (numpy array) without file I/O.
+        Ideal for real-time video processing.
+
+        Args:
+            frame: BGR numpy array from cv2.VideoCapture.
+
+        Returns:
+            ShelfDetectionResult with all detections.
+        """
+        import time
+        start_time = time.time()
+
+        h, w = frame.shape[:2]
+        preprocessed = self.preprocess_image(frame)
+
+        if self.use_synthetic:
+            detections = self._synthetic_detect(preprocessed, w, h)
+        else:
+            detections = self._yolo_detect(preprocessed)
+
+        elapsed = (time.time() - start_time) * 1000
+
+        # Assign shelf regions based on y-coordinate
+        if detections:
+            y_positions = [d.bbox[1] for d in detections]
+            if y_positions:
+                min_y, max_y = min(y_positions), max(y_positions)
+                shelf_height = (max_y - min_y) / 4 if max_y > min_y else h / 4
+                for d in detections:
+                    d.shelf_region = int((d.bbox[1] - min_y) / max(shelf_height, 1))
+
+        return ShelfDetectionResult(
+            image_path="<live_frame>",
+            detections=detections,
+            num_products=len(detections),
+            processing_time_ms=round(elapsed, 2),
+            image_width=w,
+            image_height=h,
+        )
 
     def _synthetic_detect(self, image: np.ndarray, w: int, h: int) -> list:
         """

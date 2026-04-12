@@ -25,23 +25,26 @@ def render(store_id: str):
         st.session_state["forecast_freq"] = "Daily"
     if "approved_orders" not in st.session_state:
         st.session_state["approved_orders"] = False
-    if "resim_counter" not in st.session_state:
-        st.session_state["resim_counter"] = 0
+    if "chart_mode" not in st.session_state:
+        st.session_state["chart_mode"] = "📈 Line Graph"
 
     # --- Header ---
-    st.markdown("""
-    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;">
-        <div>
+    header_col, toggle_col = st.columns([4, 2])
+    with header_col:
+        st.markdown("""
+        <div style="margin-bottom:28px;">
             <div class="section-label"></div>
             <h1 class="section-title">Demand Forecast</h1>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # ── Functional Re-Simulate button ─────────────────────────────
-    if st.button("🔄 Run Re-Simulate", key="resim_btn"):
-        st.session_state["resim_counter"] += 1
-        st.rerun()
+        """, unsafe_allow_html=True)
+    with toggle_col:
+        st.radio(
+            "Chart Type",
+            ["📈 Line Graph", "📊 Histogram"],
+            key="chart_mode",
+            horizontal=True,
+            label_visibility="collapsed",
+        )
 
     # Subtitle
     sku_code = "DRK-CL-500ML"
@@ -102,7 +105,8 @@ def _render_forecast_chart():
     holiday_on = st.session_state.get("forecast_holiday", True)
     competitor_on = st.session_state.get("forecast_competitor", False)
     freq = st.session_state.get("forecast_freq", "Daily")
-    resim = st.session_state.get("resim_counter", 0)
+    chart_mode = st.session_state.get("chart_mode", "📈 Line Graph")
+    is_histogram = "Histogram" in chart_mode
 
     horizon_map = {"7D": 7, "30D": 30, "90D": 90}
     horizon_days = horizon_map.get(horizon_key, 30)
@@ -125,8 +129,8 @@ def _render_forecast_chart():
         </div>
     """, unsafe_allow_html=True)
 
-    # ── Dynamic seed: changes with Re-Simulate clicks ─────────────
-    seed_val = 101 + resim * 7 + safety + horizon_days
+    # ── Dynamic seed based on parameters ──────────────────────────
+    seed_val = 101 + safety + horizon_days
     np.random.seed(int(seed_val) % (2**31))
 
     today = datetime.now().date()
@@ -172,28 +176,43 @@ def _render_forecast_chart():
         h_dates, h_values = hist_dates, hist_values
         f_dates, f_base, f_upper, f_lower = fore_dates, fore_base, fore_upper, fore_lower
 
-    # Historical
-    fig.add_trace(go.Scatter(
-        x=h_dates, y=h_values,
-        mode="lines", name="Historical",
-        line=dict(color="#bcc9ca", width=1.5),
-    ))
+    if is_histogram:
+        # ── Histogram mode ────────────────────────────────────────
+        fig.add_trace(go.Bar(
+            x=h_dates, y=h_values,
+            name="Historical",
+            marker=dict(color="rgba(188,201,202,0.5)", line=dict(width=0)),
+        ))
+        fig.add_trace(go.Bar(
+            x=f_dates, y=f_base,
+            name="Forecast",
+            marker=dict(color="rgba(110,230,238,0.6)", line=dict(width=0)),
+        ))
+        fig.update_layout(barmode="group", bargap=0.15)
+    else:
+        # ── Line Graph mode ───────────────────────────────────────
+        # Historical
+        fig.add_trace(go.Scatter(
+            x=h_dates, y=h_values,
+            mode="lines", name="Historical",
+            line=dict(color="#bcc9ca", width=1.5),
+        ))
 
-    # Confidence band
-    fig.add_trace(go.Scatter(
-        x=list(f_dates) + list(f_dates[::-1]),
-        y=list(f_upper) + list(f_lower[::-1]),
-        fill="toself", fillcolor="rgba(110,230,238,0.06)",
-        line=dict(width=0), name="Confidence",
-        showlegend=False,
-    ))
+        # Confidence band
+        fig.add_trace(go.Scatter(
+            x=list(f_dates) + list(f_dates[::-1]),
+            y=list(f_upper) + list(f_lower[::-1]),
+            fill="toself", fillcolor="rgba(110,230,238,0.06)",
+            line=dict(width=0), name="Confidence",
+            showlegend=False,
+        ))
 
-    # Forecast
-    fig.add_trace(go.Scatter(
-        x=f_dates, y=f_base,
-        mode="lines", name="Forecast",
-        line=dict(color="#6ee6ee", width=2.5),
-    ))
+        # Forecast
+        fig.add_trace(go.Scatter(
+            x=f_dates, y=f_base,
+            mode="lines", name="Forecast",
+            line=dict(color="#6ee6ee", width=2.5),
+        ))
 
     # TODAY marker
     today_str = today.isoformat()
@@ -279,12 +298,42 @@ def _render_algorithm_params():
 
 def _get_replenishment_items() -> list:
     """Get replenishment data list."""
-    return [
+    items = []
+    
+    # -- Inject Manual Tasks from Session State --
+    manual_tasks = st.session_state.get("manual_tasks", [])
+    for task in reversed(manual_tasks):
+        # Extract SKU and Name from "RESTOCK Soda 12pk (SKU 8821)..." if possible
+        import re
+        detail = task.get("detail", "")
+        match = re.search(r"RESTOCK (.*?) \(SKU (\d+)\)", detail)
+        if match:
+            name, sku_num = match.groups()
+            sku = f"SKU-{sku_num}"
+        else:
+            name = task.get("title", "Manual Restock")
+            sku = "SKU-MANUAL"
+            
+        items.append({
+            "sku": sku,
+            "name": name,
+            "stock": 0,
+            "stock_status": "Critical Restock",
+            "stock_color": "#ffb4ab",
+            "demand": 150,
+            "min_max": "100 / 300",
+            "order": 50,
+            "has_action": True
+        })
+
+    items.extend([
         {"sku": "DRK-CL-500ML", "name": "Sparkling Water - Case of 12", "stock": 142, "stock_status": "Below Safety (250)", "stock_color": "#ffb4ab", "demand": 892, "min_max": "400 / 1200", "order": 1050, "has_action": True},
         {"sku": "SNK-CH-90G", "name": "Classic Sea Salt Chips", "stock": 580, "stock_status": "Healthy", "stock_color": "#6ee6ee", "demand": 320, "min_max": "200 / 800", "order": 0, "has_action": False},
         {"sku": "DAI-MK-2L", "name": "Whole Milk 2L Bottle", "stock": 85, "stock_status": "Expiring in 2D", "stock_color": "#cecb5b", "demand": 450, "min_max": "100 / 500", "order": 415, "has_action": True},
         {"sku": "CON-SU-1KG", "name": "Granulated Sugar 1kg", "stock": 1200, "stock_status": "Overstock", "stock_color": "#bcc9ca", "demand": 45, "min_max": "200 / 600", "order": 0, "has_action": False},
-    ]
+    ])
+    
+    return items
 
 
 def _render_replenishment_table():
