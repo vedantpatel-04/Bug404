@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+venv/
+env/
+gpu_env/
+training/gpu_env/
+
+# Datasets / large files
+datasets/
+runs/
+weights/
+*.pt
+*.exe
+
+# Temporary data
+data/*.jpg
+data/*.png
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Database (optional)
+*.db
