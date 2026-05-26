@@ -17,7 +17,7 @@ from config.settings import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, ALER
 
 
 class DashboardNotifier:
-    """Push notifications to the Streamlit dashboard via session state."""
+    """Push notifications to the React dashboard via API."""
 
     def __init__(self):
         self.pending_notifications = []

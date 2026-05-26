@@ -100,9 +100,7 @@ POS_HISTORY_DAYS = 730  # 2 years
 
 # ─── Dashboard ────────────────────────────────────────────────
 DASHBOARD_REFRESH_INTERVAL = 30  # seconds
-STREAMLIT_PAGE_TITLE = "ShelfIQ — Retail Shelf Intelligence"
-STREAMLIT_PAGE_ICON = "🛒"
-STREAMLIT_LAYOUT = "wide"
+
 
 # ─── Shelf Optimizer ─────────────────────────────────────────
 OPTIMIZER_OUTPUT_DIR = DATA_DIR / "optimized_planograms"

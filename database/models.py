@@ -84,37 +84,7 @@ CREATE TABLE IF NOT EXISTS alerts (
     FOREIGN KEY (store_id) REFERENCES stores(store_id)
 );
 
--- Demand forecasts
-CREATE TABLE IF NOT EXISTS forecasts (
-    forecast_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sku_id TEXT NOT NULL,
-    store_id TEXT NOT NULL,
-    forecast_date TEXT NOT NULL,
-    yhat REAL NOT NULL,
-    yhat_lower REAL,
-    yhat_upper REAL,
-    actual REAL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sku_id) REFERENCES products(sku_id),
-    FOREIGN KEY (store_id) REFERENCES stores(store_id)
-);
 
--- Replenishment orders
-CREATE TABLE IF NOT EXISTS replenishment_orders (
-    order_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sku_id TEXT NOT NULL,
-    store_id TEXT NOT NULL,
-    order_quantity INTEGER NOT NULL,
-    current_stock INTEGER DEFAULT 0,
-    reorder_point REAL DEFAULT 0,
-    status TEXT CHECK(status IN ('PENDING','APPROVED','IN_TRANSIT','DELIVERED','CANCELLED')) DEFAULT 'PENDING',
-    priority TEXT CHECK(priority IN ('LOW','MEDIUM','HIGH','CRITICAL')) DEFAULT 'MEDIUM',
-    estimated_delivery TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sku_id) REFERENCES products(sku_id),
-    FOREIGN KEY (store_id) REFERENCES stores(store_id)
-);
 
 -- Planogram compliance reports
 CREATE TABLE IF NOT EXISTS compliance_reports (
@@ -167,7 +137,7 @@ CREATE TABLE IF NOT EXISTS weather_data (
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_detections_store ON detections(store_id, detected_at);
 CREATE INDEX IF NOT EXISTS idx_alerts_store ON alerts(store_id, created_at);
-CREATE INDEX IF NOT EXISTS idx_forecasts_sku ON forecasts(sku_id, store_id, forecast_date);
+
 CREATE INDEX IF NOT EXISTS idx_pos_date ON pos_transactions(date, store_id, sku_id);
 CREATE INDEX IF NOT EXISTS idx_weather_date ON weather_data(date, store_id);
 CREATE INDEX IF NOT EXISTS idx_compliance_store ON compliance_reports(store_id, checked_at);

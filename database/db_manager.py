@@ -118,35 +118,10 @@ class DatabaseManager:
             limit=limit,
         )
 
-    def get_pos_data(self, store_id: str = "", sku_id: str = "") -> list:
-        where_parts = []
-        params = []
-        if store_id:
-            where_parts.append("store_id = ?")
-            params.append(store_id)
-        if sku_id:
-            where_parts.append("sku_id = ?")
-            params.append(sku_id)
-        where = " AND ".join(where_parts) if where_parts else ""
-        return self.fetch_all("pos_transactions", where, tuple(params), order_by="date ASC")
-
-    def get_forecasts(self, sku_id: str, store_id: str) -> list:
-        return self.fetch_all(
-            "forecasts",
-            where="sku_id = ? AND store_id = ?",
-            params=(sku_id, store_id),
-            order_by="forecast_date ASC",
-        )
-
     def get_compliance_reports(self, store_id: str = "") -> list:
         where = "store_id = ?" if store_id else ""
         params = (store_id,) if store_id else ()
         return self.fetch_all("compliance_reports", where, params, order_by="checked_at DESC")
-
-    def get_replenishment_orders(self, status: str = "") -> list:
-        where = "status = ?" if status else ""
-        params = (status,) if status else ()
-        return self.fetch_all("replenishment_orders", where, params, order_by="created_at DESC")
 
     def acknowledge_alert(self, alert_id: int, user: str = "system") -> None:
         self.update(
