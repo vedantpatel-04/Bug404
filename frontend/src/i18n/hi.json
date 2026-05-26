@@ -1,0 +1,62 @@
+{
+  "app_name": "ShelfIQ",
+  "tagline": "भारत का शेल्फ इंटेलिजेंस प्लेटफॉर्म",
+  "nav": {
+    "overview": "अवलोकन",
+    "shelf_monitoring": "शेल्फ निगरानी",
+    "compliance": "अनुपालन",
+    "forecast": "मांग पूर्वानुमान",
+    "alerts": "अलर्ट केंद्र",
+    "analytics": "विश्लेषण",
+    "festival": "त्यौहार डैशबोर्ड",
+    "settings": "सेटिंग्स"
+  },
+  "kpi": {
+    "health_score": "शेल्फ स्वास्थ्य स्कोर",
+    "active_alerts": "सक्रिय अलर्ट",
+    "compliance_score": "अनुपालन स्कोर",
+    "revenue_saved": "बचाया गया राजस्व",
+    "stockouts_prevented": "स्टॉकआउट रोके गए",
+    "avg_resolution": "औसत समाधान समय"
+  },
+  "alerts": {
+    "title": "अलर्ट केंद्र",
+    "mark_resolved": "हल किया गया",
+    "reassign": "पुनर्नियुक्त करें",
+    "stockout": "स्टॉक खत्म",
+    "low_stock": "कम स्टॉक",
+    "planogram_violation": "प्लानोग्राम उल्लंघन",
+    "price_mismatch": "मूल्य बेमेल",
+    "critical": "गंभीर",
+    "high": "उच्च",
+    "medium": "मध्यम",
+    "low": "कम"
+  },
+  "forecast": {
+    "title": "मांग पूर्वानुमान",
+    "festival_impact": "त्यौहार प्रभाव",
+    "predicted_lift": "अनुमानित वृद्धि",
+    "at_risk": "जोखिम में",
+    "days_away": "दिन बाकी",
+    "reorder_now": "अभी ऑर्डर करें"
+  },
+  "compliance": {
+    "title": "प्लानोग्राम अनुपालन",
+    "overall_score": "कुल स्कोर",
+    "violations": "उल्लंघन",
+    "misplaced": "गलत जगह",
+    "price_tag": "मूल्य बेमेल",
+    "missing_facing": "गायब फेसिंग"
+  },
+  "common": {
+    "login": "लॉगिन",
+    "logout": "लॉगआउट",
+    "loading": "लोड हो रहा है...",
+    "no_data": "कोई डेटा उपलब्ध नहीं",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "search": "खोजें",
+    "filter": "फ़िल्टर",
+    "export": "निर्यात"
+  }
+}

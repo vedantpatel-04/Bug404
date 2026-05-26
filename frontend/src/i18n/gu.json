@@ -1,0 +1,54 @@
+{
+  "app_name": "ShelfIQ",
+  "tagline": "ભારતનું શેલ્ફ ઇન્ટેલિજન્સ પ્લેટફોર્મ",
+  "nav": {
+    "overview": "ઝાંખી",
+    "shelf_monitoring": "શેલ્ફ મોનિટરિંગ",
+    "compliance": "અનુપાલન",
+    "forecast": "માંગ આગાહી",
+    "alerts": "એલર્ટ સેન્ટર",
+    "analytics": "વિશ્લેષણ",
+    "festival": "તહેવાર ડેશબોર્ડ",
+    "settings": "સેટિંગ્સ"
+  },
+  "kpi": {
+    "health_score": "શેલ્ફ હેલ્થ સ્કોર",
+    "active_alerts": "સક્રિય એલર્ટ",
+    "compliance_score": "અનુપાલન સ્કોર",
+    "revenue_saved": "બચાવેલી આવક",
+    "stockouts_prevented": "સ્ટૉકઆઉટ અટકાવ્યા",
+    "avg_resolution": "સરેરાશ ઉકેલ સમય"
+  },
+  "alerts": {
+    "title": "એલર્ટ સેન્ટર",
+    "mark_resolved": "ઉકેલ થયું",
+    "reassign": "ફરી સોંપો",
+    "stockout": "સ્ટૉક ખતમ",
+    "low_stock": "ઓછો સ્ટૉક",
+    "planogram_violation": "પ્લાનોગ્રામ ઉલ્લંઘન",
+    "price_mismatch": "ભાવ અસમાનતા",
+    "critical": "ગંભીર",
+    "high": "ઉચ્ચ",
+    "medium": "મધ્યમ",
+    "low": "ઓછું"
+  },
+  "forecast": {
+    "title": "માંગ આગાહી",
+    "festival_impact": "તહેવાર અસર",
+    "predicted_lift": "અનુમાનિત વધારો",
+    "at_risk": "જોખમમાં",
+    "days_away": "દિવસ બાકી",
+    "reorder_now": "હમણાં ઓર્ડર કરો"
+  },
+  "common": {
+    "login": "લૉગિન",
+    "logout": "લૉગઆઉટ",
+    "loading": "લોડ થઈ રહ્યું છે...",
+    "no_data": "કોઈ ડેટા ઉપલબ્ધ નથી",
+    "save": "સાચવો",
+    "cancel": "રદ કરો",
+    "search": "શોધો",
+    "filter": "ફિલ્ટર",
+    "export": "નિકાસ"
+  }
+}

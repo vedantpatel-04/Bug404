@@ -1,0 +1,39 @@
+# ShelfIQ v3.0 Backend
+# Core API
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.7.0
+pydantic-settings>=2.3.0
+
+# Database
+sqlalchemy[asyncio]>=2.0.30
+asyncpg>=0.29.0
+aiosqlite>=0.20.0
+alembic>=1.13.0
+
+# Authentication
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+cryptography>=42.0.0
+
+# Redis
+redis[hiredis]>=5.0.0
+
+# Task Queue
+celery[redis]>=5.4.0
+
+# HTTP Client
+httpx>=0.27.0
+
+# Observability
+structlog>=24.1.0
+sentry-sdk[fastapi]>=2.0.0
+prometheus-fastapi-instrumentator>=7.0.0
+
+# Utilities
+python-multipart>=0.0.9
+python-dotenv>=1.0.0
+pyotp>=2.9.0
+
+# Existing ML modules (installed from project root)
+# numpy, pandas, opencv-python, ultralytics, prophet, etc.

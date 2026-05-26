@@ -28,3 +28,10 @@ Thumbs.db
 
 # Database (optional)
 *.db
+.env
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
+__pycache__/
+*.pyc

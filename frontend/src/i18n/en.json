@@ -1,0 +1,62 @@
+{
+  "app_name": "ShelfIQ",
+  "tagline": "India's Shelf Intelligence Platform",
+  "nav": {
+    "overview": "Overview",
+    "shelf_monitoring": "Shelf Monitoring",
+    "compliance": "Compliance",
+    "forecast": "Demand Forecast",
+    "alerts": "Alert Center",
+    "analytics": "Analytics",
+    "festival": "Festival Dashboard",
+    "settings": "Settings"
+  },
+  "kpi": {
+    "health_score": "Shelf Health Score",
+    "active_alerts": "Active Alerts",
+    "compliance_score": "Compliance Score",
+    "revenue_saved": "Revenue Saved",
+    "stockouts_prevented": "Stockouts Prevented",
+    "avg_resolution": "Avg Resolution Time"
+  },
+  "alerts": {
+    "title": "Alert Center",
+    "mark_resolved": "Mark Resolved",
+    "reassign": "Reassign",
+    "stockout": "Stockout",
+    "low_stock": "Low Stock",
+    "planogram_violation": "Planogram Violation",
+    "price_mismatch": "Price Mismatch",
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "forecast": {
+    "title": "Demand Forecast",
+    "festival_impact": "Festival Impact",
+    "predicted_lift": "Predicted Lift",
+    "at_risk": "At Risk",
+    "days_away": "days away",
+    "reorder_now": "Reorder Now"
+  },
+  "compliance": {
+    "title": "Planogram Compliance",
+    "overall_score": "Overall Score",
+    "violations": "Violations",
+    "misplaced": "Misplaced Product",
+    "price_tag": "Price Mismatch",
+    "missing_facing": "Missing Facing"
+  },
+  "common": {
+    "login": "Login",
+    "logout": "Logout",
+    "loading": "Loading...",
+    "no_data": "No data available",
+    "save": "Save",
+    "cancel": "Cancel",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export"
+  }
+}
