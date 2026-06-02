@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { alertsAPI } from '../api/client';
 import { CheckCircle, Package, AlertTriangle, Tag } from 'lucide-react';
@@ -20,8 +20,6 @@ interface Alert {
 
 const SEVERITY_CLASS: Record<number, string> = { 5: 'critical', 4: 'critical', 3: 'high', 2: 'medium', 1: 'low' };
 const SEVERITY_LABEL: Record<number, string> = { 5: 'CRITICAL', 4: 'CRITICAL', 3: 'HIGH', 2: 'MEDIUM', 1: 'LOW' };
-
-import { ReactNode } from 'react';
 
 const alertIcons: Record<string, ReactNode> = {
   stockout: <Package size={18} />,

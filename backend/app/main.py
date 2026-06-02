@@ -135,22 +135,22 @@ def _check_ml_modules() -> str:
     """Check if existing ML modules are importable."""
     available = []
     try:
-        import models.shelf_detector
+        import models.shelf_detector  # noqa: F401
         available.append("YOLOv8")
     except ImportError:
         pass
     try:
-        import models.sku_recognizer
+        import models.sku_recognizer  # noqa: F401
         available.append("CLIP")
     except ImportError:
         pass
     try:
-        import forecasting.demand_forecaster
+        import forecasting.demand_forecaster  # noqa: F401
         available.append("Prophet")
     except ImportError:
         pass
     try:
-        import alerts.alert_manager
+        import alerts.alert_manager  # noqa: F401
         available.append("Alerts")
     except ImportError:
         pass

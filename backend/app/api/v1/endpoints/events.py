@@ -1,7 +1,7 @@
 """
 Indian Events endpoint — festival calendar + demand impact predictions.
 """
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from fastapi import APIRouter, Depends
 
