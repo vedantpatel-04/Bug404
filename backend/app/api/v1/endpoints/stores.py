@@ -1,7 +1,7 @@
 """
 Store & Camera endpoints — CRUD for stores and cameras.
 """
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 

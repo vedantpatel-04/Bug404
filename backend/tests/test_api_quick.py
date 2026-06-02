@@ -1,6 +1,5 @@
 """Full ShelfIQ v3.0 API test — all 12 endpoint groups."""
 import httpx
-import json
 
 BASE = "http://127.0.0.1:8000"
 
@@ -91,7 +90,7 @@ print(f"15. Root              {r.status_code}")
 # Summary
 total = 15
 passed = sum(1 for _ in range(1))  # placeholder
-print(f"\n{'=' * 65}")
+print("\n" + "=" * 65)
 print(f"  All {total} endpoints tested. Swagger UI: {BASE}/docs")
-print(f"  Frontend: http://localhost:5173")
-print(f"{'=' * 65}")
+print("  Frontend: http://localhost:5173")
+print("=" * 65)

@@ -13,12 +13,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Add project root to path so existing modules (models/, forecasting/, etc.) are importable
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(PROJECT_ROOT))
+sys.path.insert(0, str(PROJECT_ROOT))  # noqa: E402
 
-from backend.app.core.config import settings
-from backend.app.db.database import init_db, close_db
-from backend.app.services.cache import cache
-from backend.app.schemas.schemas import HealthResponse
+from backend.app.core.config import settings  # noqa: E402
+from backend.app.db.database import init_db, close_db  # noqa: E402
+from backend.app.services.cache import cache  # noqa: E402
+from backend.app.schemas.schemas import HealthResponse  # noqa: E402
 
 
 # ── Lifespan ─────────────────────────────────────────────────
@@ -78,7 +78,7 @@ app.add_middleware(
 
 # ── Routes ───────────────────────────────────────────────────
 
-from backend.app.api.v1.router import api_router
+from backend.app.api.v1.router import api_router  # noqa: E402
 app.include_router(api_router)
 
 
@@ -135,22 +135,22 @@ def _check_ml_modules() -> str:
     """Check if existing ML modules are importable."""
     available = []
     try:
-        from models.shelf_detector import ShelfDetector
+        import models.shelf_detector
         available.append("YOLOv8")
     except ImportError:
         pass
     try:
-        from models.sku_recognizer import SKURecognizer
+        import models.sku_recognizer
         available.append("CLIP")
     except ImportError:
         pass
     try:
-        from forecasting.demand_forecaster import DemandForecaster
+        import forecasting.demand_forecaster
         available.append("Prophet")
     except ImportError:
         pass
     try:
-        from alerts.alert_manager import AlertManager
+        import alerts.alert_manager
         available.append("Alerts")
     except ImportError:
         pass

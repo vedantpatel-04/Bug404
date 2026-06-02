@@ -4,7 +4,6 @@ Forecast endpoints — wraps existing DemandForecaster + festival annotations.
 import sys
 import json
 from pathlib import Path
-from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
@@ -63,7 +62,6 @@ async def get_forecast(
 
     try:
         import io
-        import os
 
         # The existing DemandForecaster prints Unicode emoji during init
         # which crashes on Windows cp1252. Redirect stdout temporarily.

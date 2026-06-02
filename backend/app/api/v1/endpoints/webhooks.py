@@ -77,14 +77,14 @@ async def whatsapp_webhook_receive(request: Request):
                         button_text = button_payload.get("text", "")
                         if "resolved" in button_text.lower():
                             # Extract alert ID from context or payload
-                            context = msg.get("context", {})
+                            msg.get("context", {})
                             # In production, map the message ID to alert ID
                             # For now, log the resolution
                             pass
 
                     # Handle text replies
                     elif msg_type == "text":
-                        text = msg.get("text", {}).get("body", "")
+                        msg.get("text", {}).get("body", "")
                         # Could process natural language replies here
                         pass
     except Exception:
@@ -127,13 +127,13 @@ async def razorpay_webhook(request: Request):
 
         if event == "payment.captured":
             # Activate subscription
-            payment = payload.get("payload", {}).get("payment", {}).get("entity", {})
+            payload.get("payload", {}).get("payment", {}).get("entity", {})
             # Update organization plan status in DB
             pass
 
         elif event == "subscription.halted":
             # Start 3-day grace period, then suspend alerts
-            subscription = payload.get("payload", {}).get("subscription", {}).get("entity", {})
+            payload.get("payload", {}).get("subscription", {}).get("entity", {})
             pass
 
     except Exception:

@@ -3,7 +3,6 @@ Analytics endpoints — heatmap, revenue recovery, festival ROI.
 """
 import sys
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 from fastapi import APIRouter, Depends, Query

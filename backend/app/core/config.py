@@ -5,7 +5,6 @@ Reads all settings from environment variables via Pydantic Settings.
 Defaults are provided for local development.
 """
 from pathlib import Path
-from typing import Optional
 
 from pydantic_settings import BaseSettings
 from pydantic import Field

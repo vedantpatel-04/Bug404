@@ -14,14 +14,12 @@ Priority routing:
 """
 import hashlib
 import hmac
-import json
 from datetime import datetime
 from typing import Optional
 
 import httpx
 
 from backend.app.core.config import settings
-from backend.app.core.encryption import decrypt_field
 
 
 # ── WhatsApp Template Names ──────────────────────────────────

@@ -7,7 +7,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends
 
-from backend.app.core.security import TokenPayload, get_current_user, require_role, UserRole
+from backend.app.core.security import TokenPayload, require_role, UserRole
 from backend.app.schemas.schemas import AnalysisRunRequest, AnalysisRunResponse
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent))

@@ -7,10 +7,8 @@ Implements:
 - Payment verification
 - Grace period handling (3-day grace → suspend alerts)
 """
-import os
 import hashlib
 import hmac
-from datetime import datetime, timedelta
 from typing import Optional
 
 import httpx

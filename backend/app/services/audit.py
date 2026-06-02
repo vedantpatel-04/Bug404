@@ -6,7 +6,6 @@ Every data access event is logged to the audit_log table:
 
 The audit_log table is append-only. Never delete or update rows.
 """
-from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession

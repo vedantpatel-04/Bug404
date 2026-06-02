@@ -10,11 +10,9 @@ This is a stub — actual API keys and endpoints are platform-specific
 and require partnership agreements.
 """
 from datetime import datetime
-from typing import Optional
 
 import httpx
 
-from backend.app.core.config import settings
 
 
 class QuickCommerceHub:

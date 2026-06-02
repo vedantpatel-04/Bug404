@@ -10,7 +10,6 @@ TTL-based caching for hot data:
 Falls back to a simple dict cache if Redis is unavailable.
 """
 import json
-import hashlib
 from typing import Any, Optional
 
 from backend.app.core.config import settings

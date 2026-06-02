@@ -7,9 +7,7 @@ Used to encrypt sensitive data stored in the database:
 
 Never store these in plaintext. Never log them.
 """
-import base64
 import os
-from typing import Optional
 
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives import padding as sym_padding

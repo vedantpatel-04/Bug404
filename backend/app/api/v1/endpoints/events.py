@@ -53,7 +53,6 @@ async def get_upcoming_events(
     This is the core India-first differentiator — make it prominent.
     """
     today = datetime.now().date()
-    thirty_days = today + timedelta(days=30)
 
     events = []
     for evt in INDIAN_EVENTS_CALENDAR:

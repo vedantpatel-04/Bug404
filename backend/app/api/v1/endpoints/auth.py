@@ -7,7 +7,6 @@ from backend.app.core.security import (
     DEMO_USERS,
     create_access_token,
     create_refresh_token,
-    decode_token,
     verify_password,
 )
 from backend.app.schemas.schemas import LoginRequest, TokenResponse, UserInfo

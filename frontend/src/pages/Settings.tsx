@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/authStore';
-import { Shield, Globe, Bell, Palette } from 'lucide-react';
+import { Shield, Globe, Bell } from 'lucide-react';
 
 export default function Settings() {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const user = useAuthStore((s) => s.user);
 
   return (

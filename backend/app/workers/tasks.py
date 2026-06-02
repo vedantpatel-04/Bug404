@@ -15,8 +15,8 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from celery import Celery
-from celery.schedules import crontab
+from celery import Celery  # noqa: E402
+from celery.schedules import crontab  # noqa: E402
 
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 
@@ -118,7 +118,7 @@ def run_forecast():
                 store_id = store["store_id"]
                 prophet_data = prepare_prophet_data(featured, sku_id, store_id)
                 if not prophet_data.empty:
-                    forecast = forecaster.forecast(prophet_data, sku_id, store_id)
+                    forecaster.forecast(prophet_data, sku_id, store_id)
                     count += 1
 
         return {"status": "completed", "forecasts_generated": count}

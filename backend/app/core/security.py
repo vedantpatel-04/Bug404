@@ -8,7 +8,6 @@ Implements:
 - Refresh tokens via httpOnly cookies
 - Token revocation via Redis blocklist
 """
-import hashlib
 import secrets
 from datetime import datetime, timedelta, timezone
 from enum import Enum

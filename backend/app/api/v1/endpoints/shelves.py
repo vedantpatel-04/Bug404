@@ -4,7 +4,7 @@ Shelf state endpoints — wraps existing CV detection data.
 import sys
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 
 from backend.app.core.security import TokenPayload, get_current_user
 from backend.app.schemas.schemas import ShelfStateResponse, ShelfSection

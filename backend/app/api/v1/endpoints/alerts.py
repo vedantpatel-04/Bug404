@@ -16,7 +16,6 @@ from fastapi import APIRouter, Depends, HTTPException, Query, WebSocket, WebSock
 
 from backend.app.core.security import TokenPayload, get_current_user
 from backend.app.schemas.schemas import AlertResponse, AlertResolveRequest, AlertListResponse
-from backend.app.notifications.whatsapp import whatsapp
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent.parent))
 
@@ -40,9 +39,6 @@ async def list_alerts(
     """
     try:
         from database.db_manager import db as legacy_db
-        from alerts.alert_manager import AlertManager
-
-        manager = AlertManager()
 
         if status_filter == "resolved":
             all_alerts_data = legacy_db.fetch_all(

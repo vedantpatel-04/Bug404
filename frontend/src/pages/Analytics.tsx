@@ -68,7 +68,7 @@ export default function Analytics() {
                   background: '#1E1E3A', border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: 8, fontSize: '0.75rem',
                 }}
-                formatter={(value: number) => [`\u20B9${value.toLocaleString('en-IN')}`, '']}
+                formatter={(value: any) => [`\u20B9${Number(value).toLocaleString('en-IN')}`, '']}
               />
               <Bar dataKey="revenue_lost" fill="rgba(225,112,85,0.6)" radius={[4,4,0,0]} name="Lost" />
               <Bar dataKey="revenue_recovered" fill="rgba(0,184,148,0.6)" radius={[4,4,0,0]} name="Recovered" />

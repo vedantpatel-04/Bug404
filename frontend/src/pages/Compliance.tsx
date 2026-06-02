@@ -20,11 +20,7 @@ interface ComplianceData {
   violations: Violation[];
 }
 
-const VIOLATION_ICONS: Record<string, string> = {
-  misplaced_product: '📦',
-  price_mismatch: '🏷️',
-  missing_facing: '👁️',
-};
+// Icons can be used here
 
 export default function Compliance() {
   const { t } = useTranslation();

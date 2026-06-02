@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { shelvesAPI } from '../api/client';
-import { Eye, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Eye } from 'lucide-react';
 
 interface ShelfState {
   shelf_id: string;

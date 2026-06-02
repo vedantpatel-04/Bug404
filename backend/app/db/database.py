@@ -7,7 +7,6 @@ Supports:
 
 Uses SQLAlchemy 2.0 async API.
 """
-from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import (
