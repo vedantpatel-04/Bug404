@@ -1,0 +1,37 @@
+# ShelfIQ — Render Blueprint
+# Docs: https://docs.render.com/blueprint-spec
+
+services:
+  # ── Backend (FastAPI) ────────────────────────────────
+  - type: web
+    name: shelfiq-backend
+    runtime: python
+    plan: free
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: FIELD_ENCRYPTION_KEY
+        generateValue: true
+
+  # ── Frontend (Vite SPA) ─────────────────────────────
+  - type: web
+    name: shelfiq-frontend
+    runtime: static
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
