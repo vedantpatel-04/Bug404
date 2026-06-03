@@ -5,13 +5,10 @@ services:
   # ── Backend (FastAPI) ────────────────────────────────
   - type: web
     name: shelfiq-backend
-    runtime: python
+    runtime: docker
     plan: free
-    buildCommand: |
-      pip install --upgrade pip
-      pip install -r requirements.txt
-      pip install -r backend/requirements.txt
-    startCommand: uvicorn backend.app.main:app --host 0.0.0.0 --port $PORT
+    dockerfilePath: backend/Dockerfile
+    dockerContext: .
     envVars:
       - key: ENVIRONMENT
         value: production
