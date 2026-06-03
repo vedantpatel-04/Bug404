@@ -133,26 +133,22 @@ async def root():
 
 def _check_ml_modules() -> str:
     """Check if existing ML modules are importable."""
+    import importlib.util
+
     available = []
-    try:
-        import models.shelf_detector  # noqa: F401
+    if importlib.util.find_spec("models.shelf_detector") is not None:
         available.append("YOLOv8")
-    except ImportError:
-        pass
-    try:
-        import models.sku_recognizer  # noqa: F401
+    if importlib.util.find_spec("models.sku_recognizer") is not None:
         available.append("CLIP")
-    except ImportError:
+    try:
+        if importlib.util.find_spec("forecasting.demand_forecaster") is not None:
+            available.append("Prophet")
+    except (ImportError, ModuleNotFoundError, ValueError):
         pass
     try:
-        import forecasting.demand_forecaster  # noqa: F401
-        available.append("Prophet")
-    except ImportError:
-        pass
-    try:
-        import alerts.alert_manager  # noqa: F401
-        available.append("Alerts")
-    except ImportError:
+        if importlib.util.find_spec("alerts.alert_manager") is not None:
+            available.append("Alerts")
+    except (ImportError, ModuleNotFoundError, ValueError):
         pass
 
     if available:
